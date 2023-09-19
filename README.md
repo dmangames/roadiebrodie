@@ -3,3 +3,4 @@ your interactive travel compendium
 Steven Zhang
 Michael Lin
 Brandon Choy
+Miccah Castorina
