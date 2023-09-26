@@ -2,7 +2,8 @@
 
 #[get("/")]
 fn index() -> &'static str {
-    "Hello, world! I am adding some random text here since I can't figure out how to add an image"
+    "Hello, world!\nGoodbye, world! I am adding some random text here since I can't figure out how to add an image"
+    
     
 }
 
@@ -10,3 +11,4 @@ fn index() -> &'static str {
 fn rocket() -> _ {
     rocket::build().mount("/", routes![index])
 }
+
