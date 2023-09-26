@@ -2,10 +2,11 @@
 
 #[get("/")]
 fn index() -> &'static str {
-    "Hello, world!"
+    "Hello, world!\nGoodbye, world!"
 }
 
 #[launch]
 fn rocket() -> _ {
     rocket::build().mount("/", routes![index])
 }
+
