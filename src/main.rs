@@ -2,7 +2,8 @@
 
 #[get("/")]
 fn index() -> &'static str {
-    "Hello, world!\nGoodbye, world!"
+    "Hello, world! I am adding some random text here since I can't figure out how to add an image\nGoodbye, world!"
+    
 }
 
 #[launch]
