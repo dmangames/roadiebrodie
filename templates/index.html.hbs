@@ -1,20 +1,51 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
+<head>
+    <title>Full-Page Canvas</title>
     <script src="public/draw.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+  
+    <canvas id="canvas"></canvas>
 
     <script>
-      window.onload = function(){
-        init();
-      };
-    </script>
-    <title>Example App - Message Board</title>
-  </head>
-  <body>
-    <h1>HEY</h1>
-    <img src="public/icon_rb.png" width="100px" height="80px" alt="Roadie Broadie Icon">
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-    <canvas id="canvas" width="500px" height="500px" style="border:1px solid #000000;"></canvas>
-    {{> map}}
-  </body>
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+
+            // Your drawing code goes here
+            // For example, draw a red rectangle:
+            ctx.fillStyle = 'cornflowerblue';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Call the resizeCanvas function when the window is resized
+        window.addEventListener('resize', resizeCanvas);
+
+        // Initial call to set canvas dimensions
+        resizeCanvas();
+
+        canvas.addEventListener("mousedown", startDraw);
+        canvas.addEventListener("mousemove", drawing);
+        canvas.addEventListener("mouseup", () => isDrawing = false);
+    </script>
+</body>
 </html>
+
