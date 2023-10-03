@@ -1,5 +1,4 @@
-let canvas;
-let ctx;
+
 
 // global variables with default value
 let prevMouseX, prevMouseY, snapshot,
