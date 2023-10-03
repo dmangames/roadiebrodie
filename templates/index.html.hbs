@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Full-Page Canvas</title>
-    <script src="public/draw.js"></script>
+
     <style>
         body, html {
             margin: 0;
@@ -21,31 +21,7 @@
   
     <canvas id="canvas"></canvas>
 
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-
-            // Your drawing code goes here
-            // For example, draw a red rectangle:
-            ctx.fillStyle = 'cornflowerblue';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // Call the resizeCanvas function when the window is resized
-        window.addEventListener('resize', resizeCanvas);
-
-        // Initial call to set canvas dimensions
-        resizeCanvas();
-
-        canvas.addEventListener("mousedown", startDraw);
-        canvas.addEventListener("mousemove", drawing);
-        canvas.addEventListener("mouseup", () => isDrawing = false);
-    </script>
+    <script src="public/draw.js"></script>
 </body>
 </html>
 
