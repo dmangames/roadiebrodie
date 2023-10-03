@@ -30,14 +30,28 @@ const drawing = (e) => {
     } 
 }
 
-function init()
-{
-    canvas = document.querySelector("canvas");
-    ctx = canvas.getContext("2d");
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    
-    canvas.addEventListener("mousedown", startDraw);
-    canvas.addEventListener("mousemove", drawing);
-    canvas.addEventListener("mouseup", () => isDrawing = false);
+
+    // Your drawing code goes here
+    // For example, draw a red rectangle:
+    ctx.fillStyle = 'cornflowerblue';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
+
+canvas = document.querySelector("canvas");
+ctx = canvas.getContext("2d");
+
+
+canvas.addEventListener("mousedown", startDraw);
+canvas.addEventListener("mousemove", drawing);
+canvas.addEventListener("mouseup", () => isDrawing = false);
+
+// Call the resizeCanvas function when the window is resized
+window.addEventListener('resize', resizeCanvas);
+
+// Initial call to set canvas dimensions
+resizeCanvas();
 
