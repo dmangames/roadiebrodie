@@ -1,10 +1,21 @@
 let map;
+let markers = [];
 
 function initMap() {
 	map = new google.maps.Map(document.getElementById("map"), {
 	center: new google.maps.LatLng(-33.91722, 151.23064),
 	zoom: 16,
 	});
+
+	document
+    .getElementById("show-markers")
+    .addEventListener("click", showMarkers);
+	document
+    .getElementById("hide-markers")
+    .addEventListener("click", hideMarkers);
+	document
+    .getElementById("delete-markers")
+    .addEventListener("click", deleteMarkers)
 
 	const iconBase = 'public/';
 
@@ -58,7 +69,35 @@ function initMap() {
 			  map,
 			});
 		});
+
+		markers.push(marker);
+		console.log(markers);
 	}
+
+	
 }
+
+// Sets the map on all markers in the array.
+function setMapOnAll(map) {
+	for (let i = 0; i < markers.length; i++) {
+	  markers[i].setMap(map);
+	}
+  }
+  
+  // Removes the markers from the map, but keeps them in the array.
+  function hideMarkers() {
+	setMapOnAll(null);
+  }
+  
+  // Shows any markers currently in the array.
+  function showMarkers() {
+	setMapOnAll(map);
+  }
+  
+  // Deletes all markers in the array by removing references to them.
+  function deleteMarkers() {
+	hideMarkers();
+	markers = [];
+  }
 
 window.initMap = initMap;
