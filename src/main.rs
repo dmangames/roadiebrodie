@@ -1,24 +1,57 @@
-#[macro_use] extern crate rocket;
-use rocket_dyn_templates::{Template, context};
-use rocket::fs::{FileServer, relative};
+#[macro_use]
+extern crate rocket;
+use rocket::fs::{relative, FileServer};
+use rocket::http::Status;
 use rocket::serde::json::{json, Value};
-use rocket::{http::Status};
+use rocket_dyn_templates::{context, Template};
+use serde::{Deserialize, Serialize};
 
 #[get("/")]
 fn index() -> Template {
-    Template::render("index", context! {
-        field: "value",
-    })
+    Template::render(
+        "index",
+        context! {
+            field: "value",
+        },
+    )
 }
 
-#[get("/hello")]
-fn hello() -> Result<Value, Status> {
-  Ok(json!({
-    "key": "value",
-    "array": [1, 2, 3, 4]
-  }))
+#[derive(Debug, Clone, Deserialize, Serialize)]
+struct Pin {
+    id: String,
+    data: String,
 }
 
+#[get("/pins")]
+fn list_pins() -> Result<Value, Status> {
+    Ok(json!([Pin {
+        id: String::from("1234"),
+        data: String::from("Lorem ipsum"),
+    }]))
+}
+
+#[get("/pin/<id>")]
+fn get_pin(id: &str) -> Result<Value, Status> {
+    Ok(json!(Pin{
+        id: id.into(),
+        data: String::from("Lorem ipsum"),
+    }))
+}
+
+#[post("/pin", data = "<input>")]
+fn create_pin(input: &str) -> Result<Value, Status> {
+    Ok(json!(Pin{
+        id: "1234".into(),
+        data: input.into(),
+    }))
+}
+
+#[delete("/pin/<id>")]
+fn delete_pin(id: &str) -> Result<Value, Status> {
+    Ok(json!({
+        "id": id,
+    }))
+}
 
 #[launch]
 fn rocket() -> _ {
@@ -26,5 +59,5 @@ fn rocket() -> _ {
         .attach(Template::fairing())
         .mount("/", routes![index])
         .mount("/public", FileServer::from(relative!("static")))
-        .mount("/api", routes![hello])
+        .mount("/api", routes![list_pins, get_pin, create_pin, delete_pin])
 }

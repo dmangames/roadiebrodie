@@ -19,4 +19,4 @@ features = ["handlebars", "tera"]
 [dependencies.mongodb]
 version = "2.7.0"
 default-features = false
-features = ["sync"] 
+features = ["sync"]
