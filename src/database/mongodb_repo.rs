@@ -3,14 +3,15 @@ extern crate dotenv;
 
 use dotenv::dotenv;
 
+use crate::models::Pin;
 use mongodb::{
     bson::{doc, extjson::de::Error, oid::ObjectId},
-    results::{InsertOneResult, UpdateResult, DeleteResult},
+    results::{DeleteResult, InsertOneResult, UpdateResult},
     sync::{Client, Collection},
 };
 
 pub struct MongoRepo {
-    col: Collection<String>,
+    col: Collection<Pin>,
 }
 
 impl MongoRepo {
@@ -22,7 +23,16 @@ impl MongoRepo {
         };
         let client = Client::with_uri_str(uri).unwrap();
         let db = client.database("rustDB");
-        let col: Collection<String> = db.collection("User");
+        let col: Collection<Pin> = db.collection("Pin");
         MongoRepo { col }
+    }
+
+    pub fn create_pin(&self, new_pin: Pin) -> Result<InsertOneResult, Error> {
+        let pin = self
+            .col
+            .insert_one(new_pin, None)
+            .ok()
+            .expect("Error creating pin");
+        Ok(pin)
     }
 }
