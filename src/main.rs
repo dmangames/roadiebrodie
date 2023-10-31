@@ -28,11 +28,12 @@ fn list_pins() -> Result<Value, Status> {
 }
 
 #[get("/pin/<id>")]
-fn get_pin(id: &str) -> Result<Value, Status> {
-    Ok(json!(Pin {
-        id: Some(id.into()),
-        data: String::from("Lorem ipsum"),
-    }))
+fn get_pin(db: &State<MongoRepo>, id: &str) -> Result<Json<Pin>, Status> {
+    let pin = db.get_pin(id);
+    match pin {
+        Ok(pin) => Ok(Json(pin)),
+        Err(_) => Err(Status::NotFound),
+    }
 }
 
 #[post("/pin", data = "<input>")]
