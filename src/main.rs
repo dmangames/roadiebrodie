@@ -37,10 +37,7 @@ fn get_pin(db: &State<MongoRepo>, id: &str) -> Result<Json<Pin>, Status> {
 }
 
 #[post("/pin", data = "<input>")]
-pub fn create_pin(
-    db: &State<MongoRepo>,
-    input: Json<Pin>,
-) -> Result<Json<InsertOneResult>, Status> {
+pub fn create_pin(db: &State<MongoRepo>, input: Json<Pin>) -> Result<Json<Pin>, Status> {
     let data = Pin {
         id: None,
         data: input.data.to_owned(),

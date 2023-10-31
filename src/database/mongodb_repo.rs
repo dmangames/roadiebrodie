@@ -6,7 +6,7 @@ use dotenv::dotenv;
 use crate::models::Pin;
 use anyhow::Error;
 use mongodb::{
-    bson::{doc, oid::ObjectId},
+    bson::{self, doc, oid::ObjectId},
     results::{DeleteResult, InsertOneResult, UpdateResult},
     sync::{Client, Collection},
 };
@@ -28,15 +28,25 @@ impl MongoRepo {
         MongoRepo { col }
     }
 
-    pub fn create_pin(&self, new_pin: Pin) -> Result<InsertOneResult, Error> {
-        let pin = self.col.insert_one(new_pin, None)?;
-        Ok(pin)
+    pub fn create_pin(&self, mut new_pin: Pin) -> Result<Pin, Error> {
+        let pin = self.col.insert_one(&new_pin, None)?;
+        let id = match pin.inserted_id {
+            bson::Bson::ObjectId(id) => Ok(id.to_hex()),
+            _ => Err(anyhow::anyhow!("unexpected db response")),
+        }?;
+        new_pin.id = Some(id);
+        Ok(new_pin)
     }
 
     pub fn get_pin(&self, id: &str) -> Result<Pin, Error> {
         let obj_id = ObjectId::parse_str(id)?;
         let filter = doc! {"_id": obj_id};
-        let pin_detail = self.col.find_one(filter, None)?;
-        Ok(pin_detail.unwrap())
+        match self.col.find_one(filter, None)? {
+            Some(mut pin) => {
+                pin.id = Some(id.to_string());
+                Ok(pin)
+            }
+            None => Err(anyhow::anyhow!("not found")),
+        }
     }
 }
