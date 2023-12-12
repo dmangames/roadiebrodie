@@ -111,7 +111,7 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Template::fairing())
         .manage(MongoRepo::init())
-        .mount("/", routes![index, google_callback])
+        .mount("/", routes![index, google_callback, google_login])
         .mount("/public", FileServer::from(relative!("static")))
         .mount("/api", routes![list_pins, get_pin, create_pin, delete_pin])
         .attach(OAuth2::<GoogleUserInfo>::fairing("google"))
