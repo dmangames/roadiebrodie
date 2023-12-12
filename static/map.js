@@ -1,6 +1,7 @@
 let map;
 let markers_map = new Map();
 
+
 function initMap() {
 	map = new google.maps.Map(document.getElementById("map"), {
 	center: new google.maps.LatLng(-33.91722, 151.23064),
@@ -29,26 +30,55 @@ function initMap() {
 		placeMarker(event.latLng);
 	});
 
+
+	class NoteWindow extends google.maps.InfoWindow
+	{
+		id = 0;
+		setId(newId){
+			this.id = newId;
+		}
+		getId(){
+			return this.id;
+		}
+		content_changed(){
+			console.log("it changed");
+		}
+
+		init(){
+			const divElem = document.createElement("div")
+			const textNode = document.createElement("p"); 
+			textNode.setAttribute("contenteditable", "true");
+			textNode.textContent = "Edit me!";
+			divElem.appendChild(textNode);
+			const newButton = document.createElement('button');
+			newButton.textContent = 'Save note!';
+			newButton.addEventListener('click', () => {
+				var noteData=textNode.textContent;
+				fetch('/api/pin', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({data: noteData}),
+				})
+				.then(response => response.text())
+				.then((data) => {
+					this.id = data.id;
+					console.log(data);
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+				});
+				});
+			divElem.appendChild(newButton);
+			this.setContent(divElem);
+		}
+	}
+
 	const contentString =
 			'<div id="content">' +
-			'<div id="siteNotice">' +
-			"</div>" +
-			'<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
-			'<div id="bodyContent">' +
-			"<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large " +
-			"sandstone rock formation in the southern part of the " +
-			"Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) " +
-			"south west of the nearest large town, Alice Springs; 450&#160;km " +
-			"(280&#160;mi) by road. Kata Tjuta and Uluru are the two major " +
-			"features of the Uluru - Kata Tjuta National Park. Uluru is " +
-			"sacred to the Pitjantjatjara and Yankunytjatjara, the " +
-			"Aboriginal people of the area. It has many springs, waterholes, " +
-			"rock caves and ancient paintings. Uluru is listed as a World " +
-			"Heritage Site.</p>" +
-			'<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
-			"https://en.wikipedia.org/w/index.php?title=Uluru</a> " +
-			"(last visited June 22, 2009).</p>" +
-			"</div>" +
+			'<p contenteditable="true">Edit this content to add your own quote</p>' +
+			'<button type="button" onclick="this.getId()">Click Me!</button>' +
 			"</div>";
 	
 	function placeMarker(location) {
@@ -62,17 +92,18 @@ function initMap() {
 		//set map with (latitude, longitude) as key - with parentheses around coordinate
 		markers_map.set(location, marker);
 
-		const infowindow = new google.maps.InfoWindow();
-		infowindow.setContent(contentString);
+		const infowindow = new NoteWindow();
+		infowindow.init();
+		infowindow.setId(1234);
 
 		marker.addListener("click", () => {
 			infowindow.open({
 			  anchor: marker,
 			  map,
 			});
+			console.log(infowindow.getId());
 		});
 	}
-
 	
 }
 
