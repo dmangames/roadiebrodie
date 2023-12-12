@@ -30,6 +30,7 @@ function initMap() {
 		placeMarker(event.latLng);
 	});
 
+
 	class NoteWindow extends google.maps.InfoWindow
 	{
 		id = 0;
@@ -44,16 +45,31 @@ function initMap() {
 		}
 
 		init(){
-			const divElem = document.createElement("div");
-			const node = document.createElement("p");
-			node.setAttribute("contenteditable", "true");
-			node.textContent = "Edit me!";
-			divElem.appendChild(node);
+			const divElem = document.createElement("div")
+			const textNode = document.createElement("p"); 
+			textNode.setAttribute("contenteditable", "true");
+			textNode.textContent = "Edit me!";
+			divElem.appendChild(textNode);
 			const newButton = document.createElement('button');
-			newButton.textContent = 'Click me!';
+			newButton.textContent = 'Save note!';
 			newButton.addEventListener('click', () => {
-				console.log(this.getId());
-			  });
+				var noteData=textNode.textContent;
+				fetch('/api/pin', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({data: noteData}),
+				})
+				.then(response => response.text())
+				.then((data) => {
+					this.id = data.id;
+					console.log(data);
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+				});
+				});
 			divElem.appendChild(newButton);
 			this.setContent(divElem);
 		}
@@ -88,7 +104,6 @@ function initMap() {
 			console.log(infowindow.getId());
 		});
 	}
-
 	
 }
 
