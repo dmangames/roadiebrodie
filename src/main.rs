@@ -32,6 +32,7 @@ struct GoogleUserInfo {
     name: String,
     given_name: String,
     family_name: String
+    //https://stackoverflow.com/questions/7130648/get-user-info-via-google-api
 }
 
 #[get("/login/google")]
