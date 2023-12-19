@@ -28,7 +28,10 @@ fn index() -> Template {
 /// User information to be retrieved from the Google People API.
 #[derive(serde::Deserialize)]
 struct GoogleUserInfo {
-    names: Vec<Value>,
+    id: String,
+    name: String,
+    given_name: String,
+    family_name: String
 }
 
 #[get("/login/google")]
@@ -38,27 +41,25 @@ fn google_login(oauth2: OAuth2<GoogleUserInfo>, cookies: &CookieJar<'_>) -> Redi
 
 // google login callback
 #[get("/auth/google")]
-fn google_callback(
+async fn google_callback(
     token: TokenResponse<GoogleUserInfo>,
     cookies: &CookieJar<'_>,
 ) -> Result<Redirect, Debug<Error>> {
     // Use the token to retrieve the user's Google account information.
-    let user_info: GoogleUserInfo = reqwest::blocking::Client::builder()
+    let user_info: GoogleUserInfo = reqwest::Client::builder()
         .build()
         .context("failed to build reqwest client")?
-        .get("https://people.googleapis.com/v1/people/me?personFields=names")
+        .get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json")
         .header(AUTHORIZATION, format!("Bearer {}", token.access_token()))
         .send()
+        .await
         .context("failed to complete request")?
         .json()
+        .await
         .context("failed to deserialize response")?;
 
-    let real_name = user_info
-        .names
-        .first()
-        .and_then(|n| n.get("displayName"))
-        .and_then(|s| s.as_str())
-        .unwrap_or("");
+    let real_id: String = dbg!(user_info.id);
+    let real_name = dbg!(user_info.given_name);
 
     // Set a private cookie with the user's name, and redirect to the home page.
     cookies.add_private(
