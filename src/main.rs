@@ -16,7 +16,13 @@ use rocket::response::{Debug, Redirect};
 use anyhow::{Error, Context};
 
 #[get("/")]
-fn index() -> Template {
+fn index(cookies: &CookieJar<'_>) -> Template {
+    // check if username exists in our cookie
+    //  let username = match dbg!(cookies.get_private("username")) {
+    //     Some(username) => dbg!(username.value().to_string()),
+    //     None => todo!(),
+    // };
+    // pull all their notes from mongo
     Template::render(
         "index",
         context! {
@@ -64,7 +70,7 @@ async fn google_callback(
 
     // Set a private cookie with the user's name, and redirect to the home page.
     cookies.add_private(
-        Cookie::build("username", real_name.to_string())
+        Cookie::build("username", real_id.to_string())
             .same_site(SameSite::Lax)
             .finish()
     );
@@ -75,6 +81,7 @@ async fn google_callback(
 fn list_pins() -> Result<Value, Status> {
     Ok(json!([Pin {
         id: Some(String::from("1234")),
+        user_id: Some(String::from("user")),
         data: String::from("Lorem ipsum"),
     }]))
 }
@@ -88,10 +95,25 @@ fn get_pin(db: &State<MongoRepo>, id: &str) -> Result<Json<Pin>, Status> {
     }
 }
 
+#[get("/user/<userid>")]
+fn get_user_pins(db: &State<MongoRepo>, userid: &str) -> Result<Json<Vec<Pin>>, Status> {
+    let pin = db.get_pins_by_userid(userid);
+    match pin {
+        Ok(pin) => Ok(Json(pin)),
+        Err(_) => Err(Status::NotFound),
+    }
+}
+
 #[post("/pin", data = "<input>")]
-pub fn create_pin(db: &State<MongoRepo>, input: Json<Pin>) -> Result<Json<Pin>, Status> {
+pub fn create_pin(db: &State<MongoRepo>, cookies: &CookieJar<'_>, input: Json<Pin>) -> Result<Json<Pin>, Status> {
+    let username = match dbg!(cookies.get_private("username")) {
+        Some(username) => dbg!(username.value().to_string()),
+        None => todo!(),
+    };
+
     let data = Pin {
         id: None,
+        user_id: Some(username),
         data: input.data.to_owned(),
     };
     let pin_detail = db.create_pin(data);
@@ -115,6 +137,6 @@ fn rocket() -> _ {
         .manage(MongoRepo::init())
         .mount("/", routes![index, google_callback, google_login])
         .mount("/public", FileServer::from(relative!("static")))
-        .mount("/api", routes![list_pins, get_pin, create_pin, delete_pin])
+        .mount("/api", routes![list_pins, get_pin, create_pin, delete_pin, get_user_pins])
         .attach(OAuth2::<GoogleUserInfo>::fairing("google"))
 }
