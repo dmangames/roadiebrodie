@@ -21,14 +21,20 @@ function initMap() {
 	const iconBase = 'public/';
 
 	const icons = {
-	yellow_pin: {
-		icon: iconBase + "rb_pin.png",
-	},
+		yellow_pin: {
+			icon: iconBase + "rb_pin.png",
+		},
 	};
 	
 	google.maps.event.addListener(map, 'click', function(event){
 		placeMarker(event.latLng);
 	});
+
+	//check if infowindow is open?
+	google.maps.InfoWindow.prototype.isOpen = function() {
+		let map = this.getMap();
+		return (map !== null && typeof map != "undefined");	
+	}
 
 
 	class NoteWindow extends google.maps.InfoWindow
