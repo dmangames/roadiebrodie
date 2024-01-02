@@ -1,6 +1,6 @@
 let map;
 let markers_map = new Map();
-
+let canMakePin = true;
 
 function initMap() {
 	map = new google.maps.Map(document.getElementById("map"), {
@@ -27,7 +27,11 @@ function initMap() {
 	};
 	
 	google.maps.event.addListener(map, 'click', function(event){
-		placeMarker(event.latLng);
+		if(canMakePin == true){
+			placeMarker(event.latLng);
+			canMakePin = false;
+		}
+		
 	});
 
 	//check if infowindow is open?
@@ -59,6 +63,7 @@ function initMap() {
 			const newButton = document.createElement('button');
 			newButton.textContent = 'Save note!';
 			newButton.addEventListener('click', () => {
+				canMakePin = true;
 				var noteData=textNode.textContent;
 				fetch('/api/pin', {
 					method: 'POST',
@@ -109,6 +114,11 @@ function initMap() {
 			});
 			console.log(infowindow.getId());
 		});
+
+		infowindow.addListener('closeclick', ()=>{
+			// Handle focus manually.
+			canMakePin = true;
+		});
 	}
 	
 }
@@ -133,6 +143,7 @@ function setMapOnAll(map) {
   // Deletes all markers in the array by removing references to them.
   function deleteMarkers() {
 	hideMarkers();
+	canMakePin = true;
 	for (let pair of markers_map.entries()){
 		markers_map.delete(pair[0]);
 	}
