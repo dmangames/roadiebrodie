@@ -4,19 +4,47 @@ use mongodb::results::InsertOneResult;
 use roadiebrodie::database::mongodb_repo::MongoRepo;
 use roadiebrodie::models::Pin;
 use rocket::fs::{relative, FileServer};
+use rocket::outcome::IntoOutcome;
+use rocket::request::{FromRequest, Outcome, Request};
 use rocket::serde::json::{json, Json, Value};
 use rocket::State;
 use rocket_dyn_templates::{context, Template};
 
 //I think we need these?
-use rocket_oauth2::{OAuth2, TokenResponse};
+use anyhow::{anyhow, Context, Error};
 use reqwest::header::{ACCEPT, AUTHORIZATION, USER_AGENT};
 use rocket::http::{Cookie, CookieJar, SameSite, Status};
 use rocket::response::{Debug, Redirect};
-use anyhow::{Error, Context};
+use rocket_oauth2::{OAuth2, TokenResponse};
+
+#[derive(Debug)]
+pub struct User {
+    id: String,
+    name: String,
+}
+
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for User {
+    type Error = Error;
+
+    async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
+        let id = request
+            .cookies()
+            .get_private("user_id")
+            .map(|cookie| cookie.value().to_string());
+        let name = request
+            .cookies()
+            .get_private("user_name")
+            .map(|cookie| cookie.value().to_string());
+        match (id, name) {
+            (Some(id), Some(name)) => Outcome::Success(User { id, name }),
+            _ => Outcome::Error((Status::Unauthorized, anyhow!("not logged in"))),
+        }
+    }
+}
 
 #[get("/")]
-fn index(cookies: &CookieJar<'_>) -> Template {
+fn index(user: Option<User>) -> Template {
     // check if username exists in our cookie
     //  let username = match dbg!(cookies.get_private("username")) {
     //     Some(username) => dbg!(username.value().to_string()),
@@ -27,6 +55,7 @@ fn index(cookies: &CookieJar<'_>) -> Template {
         "index",
         context! {
             field: "value",
+            user_name: user.map(|user| user.name),
         },
     )
 }
@@ -37,8 +66,7 @@ struct GoogleUserInfo {
     id: String,
     name: String,
     given_name: String,
-    family_name: String
-    //https://stackoverflow.com/questions/7130648/get-user-info-via-google-api
+    family_name: String, //https://stackoverflow.com/questions/7130648/get-user-info-via-google-api
 }
 
 #[get("/login/google")]
@@ -65,15 +93,12 @@ async fn google_callback(
         .await
         .context("failed to deserialize response")?;
 
-    let real_id: String = dbg!(user_info.id);
-    let real_name = dbg!(user_info.given_name);
-
+    let add_cookie = |k, v| {
+        cookies.add_private(Cookie::build((k, v)).same_site(SameSite::Lax));
+    };
     // Set a private cookie with the user's name, and redirect to the home page.
-    cookies.add_private(
-        Cookie::build("username", real_id.to_string())
-            .same_site(SameSite::Lax)
-            .finish()
-    );
+    add_cookie("user_id", user_info.id);
+    add_cookie("user_name", user_info.given_name);
     Ok(Redirect::to("/"))
 }
 
@@ -105,15 +130,14 @@ fn get_user_pins(db: &State<MongoRepo>, userid: &str) -> Result<Json<Vec<Pin>>, 
 }
 
 #[post("/pin", data = "<input>")]
-pub fn create_pin(db: &State<MongoRepo>, cookies: &CookieJar<'_>, input: Json<Pin>) -> Result<Json<Pin>, Status> {
-    let username = match dbg!(cookies.get_private("username")) {
-        Some(username) => dbg!(username.value().to_string()),
-        None => todo!(),
-    };
-
+pub fn create_pin(
+    db: &State<MongoRepo>,
+    user: User,
+    input: Json<Pin>,
+) -> Result<Json<Pin>, Status> {
     let data = Pin {
         id: None,
-        user_id: Some(username),
+        user_id: Some(user.id),
         data: input.data.to_owned(),
     };
     let pin_detail = db.create_pin(data);
@@ -137,6 +161,9 @@ fn rocket() -> _ {
         .manage(MongoRepo::init())
         .mount("/", routes![index, google_callback, google_login])
         .mount("/public", FileServer::from(relative!("static")))
-        .mount("/api", routes![list_pins, get_pin, create_pin, delete_pin, get_user_pins])
+        .mount(
+            "/api",
+            routes![list_pins, get_pin, create_pin, delete_pin, get_user_pins],
+        )
         .attach(OAuth2::<GoogleUserInfo>::fairing("google"))
 }

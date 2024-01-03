@@ -12,9 +12,15 @@
       <input id="hide-markers" type="button" value="Hide Markers" />
       <input id="show-markers" type="button" value="Show Markers" />
       <input id="delete-markers" type="button" value="Delete Markers" />
+      {{#if user_name}}
+      <a href='/' class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Hi {{user_name}}!
+      </a>
+      {{else}}
       <a href='login/google' class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Login
       </a>
+      {{/if}}
     </div>
     <div id="map"></div>
     <script
