@@ -83,13 +83,26 @@ function initMap() {
 		}
 
 		init(){
+
 			const divElem = document.createElement("div")
+			divElem.style.display = 'flex';
+			
+			divElem.style.alignItems = 'center';
+
 			const textNode = document.createElement("p"); 
 			textNode.setAttribute("contenteditable", "true");
 			textNode.textContent = "Edit me!";
 			divElem.appendChild(textNode);
+
 			const newButton = document.createElement('button');
 			newButton.textContent = 'Save note!';
+			newButton.style.color = "white";
+			newButton.style.backgroundColor = "rgb(33, 150, 243)";
+			newButton.style.textAlign = 'center';
+			newButton.style.border = 'solid 1px';
+			newButton.style.borderRadius = "5px";
+			newButton.style.padding = '5px';
+
 			newButton.addEventListener('click', () => {
 				var noteData=textNode.textContent;
 				console.log("this.id = ", this.id);
@@ -114,12 +127,6 @@ function initMap() {
 			this.myholytextelem = textNode;
 		}
 	}
-
-	const contentString =
-			'<div id="content">' +
-			'<p contenteditable="true">Edit this content to add your own quote</p>' +
-			'<button type="button" onclick="this.getId()">Click Me!</button>' +
-			"</div>";
 	
 	function placeMarker(location) {
 		
