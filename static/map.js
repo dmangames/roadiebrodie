@@ -1,6 +1,5 @@
 let map;
 let markers_map = new Map();
-let canMakePin = true;
 
 function initMap() {
 	map = new google.maps.Map(document.getElementById("map"), {
@@ -27,11 +26,7 @@ function initMap() {
 	};
 	
 	google.maps.event.addListener(map, 'click', function(event){
-		if(canMakePin == true){
 			placeMarker(event.latLng);
-			canMakePin = false;
-		}
-		
 	});
 
 	//check if infowindow is open?
@@ -43,6 +38,7 @@ function initMap() {
 
 	class NoteWindow extends google.maps.InfoWindow
 	{
+		
 		id = 0;
 		setId(newId){
 			this.id = newId;
@@ -82,6 +78,14 @@ function initMap() {
 				});
 				});
 			divElem.appendChild(newButton);
+			
+			const deleteButton = document.createElement('button');
+			deleteButton.textContent = 'Delete';
+			deleteButton.addEventListener('click', () => {
+				console.log("delete button pressed")
+				
+			})
+			divElem.appendChild(deleteButton);
 			this.setContent(divElem);
 		}
 	}
@@ -93,7 +97,7 @@ function initMap() {
 			"</div>";
 	
 	function placeMarker(location) {
-
+		
 		const marker = new google.maps.Marker({
 		position: location,
 		icon: icons["yellow_pin"].icon,
@@ -115,10 +119,13 @@ function initMap() {
 			console.log(infowindow.getId());
 		});
 
-		infowindow.addListener('closeclick', ()=>{
-			// Handle focus manually.
-			canMakePin = true;
+		//double click to delete pin
+		marker.addListener("dblclick", function() {
+			marker.setMap(null);
+			markers_map.delete(marker.location);
+			console.log(markers_map);
 		});
+
 	}
 	
 }
@@ -138,6 +145,7 @@ function setMapOnAll(map) {
   // Shows any markers currently in the array.
   function showMarkers() {
 	setMapOnAll(map);
+	console.log(markers_map)
   }
   
   // Deletes all markers in the array by removing references to them.
@@ -147,6 +155,7 @@ function setMapOnAll(map) {
 	for (let pair of markers_map.entries()){
 		markers_map.delete(pair[0]);
 	}
+	
   }
 
 window.initMap = initMap;
