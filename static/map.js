@@ -78,14 +78,6 @@ function initMap() {
 				});
 				});
 			divElem.appendChild(newButton);
-			
-			const deleteButton = document.createElement('button');
-			deleteButton.textContent = 'Delete';
-			deleteButton.addEventListener('click', () => {
-				console.log("delete button pressed")
-				
-			})
-			divElem.appendChild(deleteButton);
 			this.setContent(divElem);
 		}
 	}
@@ -120,6 +112,7 @@ function initMap() {
 		});
 
 		//double click to delete pin
+		//NOT REMOVING THE PIN ON THE MARKERS_MAP???
 		marker.addListener("dblclick", function() {
 			marker.setMap(null);
 			markers_map.delete(marker.location);
