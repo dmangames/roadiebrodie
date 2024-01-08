@@ -26,7 +26,7 @@ function initMap() {
 	};
 	
 	google.maps.event.addListener(map, 'click', function(event){
-			placeMarker(event.latLng);
+		placeMarker(event.latLng);
 	});
 
 	//check if infowindow is open?
@@ -116,7 +116,6 @@ function initMap() {
 		marker.addListener("dblclick", function() {
 			marker.setMap(null);
 			markers_map.delete(marker.location);
-			console.log(markers_map);
 		});
 
 	}
@@ -144,7 +143,6 @@ function setMapOnAll(map) {
   // Deletes all markers in the array by removing references to them.
   function deleteMarkers() {
 	hideMarkers();
-	canMakePin = true;
 	for (let pair of markers_map.entries()){
 		markers_map.delete(pair[0]);
 	}
