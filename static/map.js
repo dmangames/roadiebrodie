@@ -112,10 +112,9 @@ function initMap() {
 		});
 
 		//double click to delete pin
-		//NOT REMOVING THE PIN ON THE MARKERS_MAP???
 		marker.addListener("dblclick", function() {
 			marker.setMap(null);
-			markers_map.delete(marker.location);
+			markers_map.delete(marker.position);
 		});
 
 	}
@@ -137,7 +136,6 @@ function setMapOnAll(map) {
   // Shows any markers currently in the array.
   function showMarkers() {
 	setMapOnAll(map);
-	console.log(markers_map)
   }
   
   // Deletes all markers in the array by removing references to them.
@@ -146,7 +144,6 @@ function setMapOnAll(map) {
 	for (let pair of markers_map.entries()){
 		markers_map.delete(pair[0]);
 	}
-	
   }
 
 window.initMap = initMap;
