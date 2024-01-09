@@ -1,7 +1,6 @@
 let map;
 let markers_map = new Map();
 
-
 function initMap() {
 	map = new google.maps.Map(document.getElementById("map"), {
 	center: new google.maps.LatLng(-33.91722, 151.23064),
@@ -39,6 +38,7 @@ function initMap() {
 
 	class NoteWindow extends google.maps.InfoWindow
 	{
+		
 		id = 0;
 		setId(newId){
 			this.id = newId;
@@ -59,6 +59,7 @@ function initMap() {
 			const newButton = document.createElement('button');
 			newButton.textContent = 'Save note!';
 			newButton.addEventListener('click', () => {
+				canMakePin = true;
 				var noteData=textNode.textContent;
 				fetch('/api/pin', {
 					method: 'POST',
@@ -88,7 +89,7 @@ function initMap() {
 			"</div>";
 	
 	function placeMarker(location) {
-
+		
 		const marker = new google.maps.Marker({
 		position: location,
 		icon: icons["yellow_pin"].icon,
@@ -109,6 +110,13 @@ function initMap() {
 			});
 			console.log(infowindow.getId());
 		});
+
+		//double click to delete pin
+		marker.addListener("dblclick", function() {
+			marker.setMap(null);
+			markers_map.delete(marker.position);
+		});
+
 	}
 	
 }
