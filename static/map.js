@@ -5,6 +5,7 @@ function initMap() {
 	map = new google.maps.Map(document.getElementById("map"), {
 	center: new google.maps.LatLng(-33.91722, 151.23064),
 	zoom: 16,
+	disableDoubleClickZoom: true,
 	});
 
 	document
@@ -25,16 +26,9 @@ function initMap() {
 		},
 	};
 	
-	google.maps.event.addListener(map, 'click', function(event){
+	google.maps.event.addListener(map, 'dblclick', function(event){
 		placeMarker(event.latLng);
 	});
-
-	//check if infowindow is open?
-	google.maps.InfoWindow.prototype.isOpen = function() {
-		let map = this.getMap();
-		return (map !== null && typeof map != "undefined");	
-	}
-
 
 	class NoteWindow extends google.maps.InfoWindow
 	{
