@@ -44,18 +44,16 @@ impl<'r> FromRequest<'r> for User {
 }
 
 #[get("/")]
-fn index(user: Option<User>) -> Template {
-    // check if username exists in our cookie
-    //  let username = match dbg!(cookies.get_private("username")) {
-    //     Some(username) => dbg!(username.value().to_string()),
-    //     None => todo!(),
-    // };
-    // pull all their notes from mongo
+fn index(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
+    let user_name: Option<&str> = match maybe_user {
+        Some(ref user) => Some(user.name.as_str()),
+        None => None,
+    };
+
     Template::render(
         "index",
         context! {
-            field: "value",
-            user_name: user.map(|user| user.name),
+            user_name: user_name,
         },
     )
 }
@@ -102,15 +100,6 @@ async fn google_callback(
     Ok(Redirect::to("/"))
 }
 
-#[get("/pins")]
-fn list_pins() -> Result<Value, Status> {
-    Ok(json!([Pin {
-        id: Some(String::from("1234")),
-        user_id: Some(String::from("user")),
-        data: String::from("Lorem ipsum"),
-    }]))
-}
-
 #[get("/pin/<id>")]
 fn get_pin(db: &State<MongoRepo>, id: &str) -> Result<Json<Pin>, Status> {
     let pin = db.get_pin(id);
@@ -120,9 +109,9 @@ fn get_pin(db: &State<MongoRepo>, id: &str) -> Result<Json<Pin>, Status> {
     }
 }
 
-#[get("/user/<userid>")]
-fn get_user_pins(db: &State<MongoRepo>, userid: &str) -> Result<Json<Vec<Pin>>, Status> {
-    let pin = db.get_pins_by_userid(userid);
+#[get("/pins")]
+fn get_user_pins(user: User, db: &State<MongoRepo>) -> Result<Json<Vec<Pin>>, Status> {
+    let pin = db.get_pins_by_userid(&user.id);
     match pin {
         Ok(pin) => Ok(Json(pin)),
         Err(_) => Err(Status::NotFound),
@@ -138,7 +127,7 @@ pub fn create_pin(
     let data = Pin {
         id: None,
         user_id: Some(user.id),
-        data: input.data.to_owned(),
+        ..input.0
     };
     let pin_detail = db.create_pin(data);
     match pin_detail {
@@ -163,7 +152,7 @@ fn rocket() -> _ {
         .mount("/public", FileServer::from(relative!("static")))
         .mount(
             "/api",
-            routes![list_pins, get_pin, create_pin, delete_pin, get_user_pins],
+            routes![get_pin, create_pin, delete_pin, get_user_pins],
         )
         .attach(OAuth2::<GoogleUserInfo>::fairing("google"))
 }
