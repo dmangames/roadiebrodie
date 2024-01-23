@@ -84,6 +84,7 @@ function initMap() {
 
 		init(){
 
+<<<<<<< HEAD
 			const divElem = document.createElement("div");
 			// divElem.style.display = 'flex';
 			// divElem.style.flexDirection = 'column';
@@ -96,6 +97,14 @@ function initMap() {
 			// divElem.style.gridTemplateRows = "auto auto auto";
 
 			const textNode = document.createElement("input"); 
+=======
+			const divElem = document.createElement("div")
+			divElem.style.display = 'flex';
+			
+			divElem.style.alignItems = 'center';
+
+			const textNode = document.createElement("p"); 
+>>>>>>> a977d3c532ec82ff2a32dafd550eaacd22034f1b
 			textNode.setAttribute("contenteditable", "true");
 			textNode.placeholder = "Edit me!";
 			textNode.style.gridArea = 'text';
@@ -113,6 +122,7 @@ function initMap() {
 			newButton.style.border = 'solid 1px';
 			newButton.style.borderRadius = "5px";
 			newButton.style.padding = '5px';
+<<<<<<< HEAD
 			newButton.style.gridArea = 'button';
 			// newButton.style.gridColumnStart = 2;
 			// newButton.style.gridColumnEnd = 3;
@@ -121,6 +131,8 @@ function initMap() {
 
 
 			
+=======
+>>>>>>> a977d3c532ec82ff2a32dafd550eaacd22034f1b
 
 			newButton.addEventListener('click', () => {
 				var noteData=textNode.textContent;
