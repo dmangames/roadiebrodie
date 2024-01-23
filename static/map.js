@@ -84,14 +84,25 @@ function initMap() {
 
 		init(){
 
-			const divElem = document.createElement("div")
-			divElem.style.display = 'flex';
-			
-			divElem.style.alignItems = 'center';
+			const divElem = document.createElement("div");
+			// divElem.style.display = 'flex';
+			// divElem.style.flexDirection = 'column';
+			// divElem.style.alignItems = 'flex-end';
+			divElem.style.display = "grid";
+			divElem.style.gridTemplateColumns = '1fr 1fr 1fr';
+			divElem.style.gridTemplateRows = '1fr 1fr 1fr';
+			divElem.style.gridTemplateAreas = '"text . ." ". . ." ". button ."';
+			// divElem.style.gridTemplateColumns = "auto auto auto";
+			// divElem.style.gridTemplateRows = "auto auto auto";
 
-			const textNode = document.createElement("p"); 
+			const textNode = document.createElement("input"); 
 			textNode.setAttribute("contenteditable", "true");
-			textNode.textContent = "Edit me!";
+			textNode.placeholder = "Edit me!";
+			textNode.style.gridArea = 'text';
+			// textNode.style.gridColumnStart = 1;
+			// textNode.style.gridColumnEnd = 2;
+			// textNode.style.gridRowStart = 1;
+			// textNode.style.gridRowEnd = 2;
 			divElem.appendChild(textNode);
 
 			const newButton = document.createElement('button');
@@ -102,6 +113,14 @@ function initMap() {
 			newButton.style.border = 'solid 1px';
 			newButton.style.borderRadius = "5px";
 			newButton.style.padding = '5px';
+			newButton.style.gridArea = 'button';
+			// newButton.style.gridColumnStart = 2;
+			// newButton.style.gridColumnEnd = 3;
+			// newButton.style.gridRowStart = 3;
+			// newButton.style.gridRowEnd = 4;
+
+
+			
 
 			newButton.addEventListener('click', () => {
 				var noteData=textNode.textContent;
