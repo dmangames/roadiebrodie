@@ -125,11 +125,10 @@ pub fn create_pin(
     input: Json<Pin>,
 ) -> Result<Json<Pin>, Status> {
     let data = Pin {
-        id: None,
         user_id: Some(user.id),
         ..input.0
     };
-    let pin_detail = db.create_pin(data);
+    let pin_detail = db.upsert_pin(data);
     match pin_detail {
         Ok(pin) => Ok(Json(pin)),
         Err(_) => Err(Status::InternalServerError),
