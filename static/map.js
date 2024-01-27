@@ -4,6 +4,8 @@ let markers_map = new Map();
 let pin_id = 0;
 let pin_map = new Map(); // id (int) to pin struct
 
+document.addEventListener('DOMContentLoaded', burgerMenuActions);
+
 var PinStruct = {
 	marker: null,
 	infowindow: null,
@@ -84,55 +86,19 @@ function initMap() {
 
 		init(){
 
-<<<<<<< HEAD
 			const divElem = document.createElement("div");
-			// divElem.style.display = 'flex';
-			// divElem.style.flexDirection = 'column';
-			// divElem.style.alignItems = 'flex-end';
-			divElem.style.display = "grid";
-			divElem.style.gridTemplateColumns = '1fr 1fr 1fr';
-			divElem.style.gridTemplateRows = '1fr 1fr 1fr';
-			divElem.style.gridTemplateAreas = '"text . ." ". . ." ". button ."';
-			// divElem.style.gridTemplateColumns = "auto auto auto";
-			// divElem.style.gridTemplateRows = "auto auto auto";
+			divElem.setAttribute("class", "container");
 
-			const textNode = document.createElement("input"); 
-=======
-			const divElem = document.createElement("div")
-			divElem.style.display = 'flex';
-			
-			divElem.style.alignItems = 'center';
-
-			const textNode = document.createElement("p"); 
->>>>>>> a977d3c532ec82ff2a32dafd550eaacd22034f1b
+			const textNode = document.createElement("textarea"); 
+			textNode.setAttribute("class", "textArea");
 			textNode.setAttribute("contenteditable", "true");
 			textNode.placeholder = "Edit me!";
-			textNode.style.gridArea = 'text';
-			// textNode.style.gridColumnStart = 1;
-			// textNode.style.gridColumnEnd = 2;
-			// textNode.style.gridRowStart = 1;
-			// textNode.style.gridRowEnd = 2;
+			
 			divElem.appendChild(textNode);
 
 			const newButton = document.createElement('button');
-			newButton.textContent = 'Save note!';
-			newButton.style.color = "white";
-			newButton.style.backgroundColor = "rgb(33, 150, 243)";
-			newButton.style.textAlign = 'center';
-			newButton.style.border = 'solid 1px';
-			newButton.style.borderRadius = "5px";
-			newButton.style.padding = '5px';
-<<<<<<< HEAD
-			newButton.style.gridArea = 'button';
-			// newButton.style.gridColumnStart = 2;
-			// newButton.style.gridColumnEnd = 3;
-			// newButton.style.gridRowStart = 3;
-			// newButton.style.gridRowEnd = 4;
-
-
-			
-=======
->>>>>>> a977d3c532ec82ff2a32dafd550eaacd22034f1b
+			newButton.setAttribute("class", "saveBtn");
+			newButton.textContent = 'Save';
 
 			newButton.addEventListener('click', () => {
 				var noteData=textNode.textContent;
@@ -197,7 +163,6 @@ function initMap() {
 
 	}
 	
-
 	// Load user pins
 	loadPins().then((data) => {
 		console.log(data);
@@ -230,6 +195,47 @@ function setMapOnAll(map) {
 	hideMarkers();
 	for (let pair of markers_map.entries()){
 		markers_map.delete(pair[0]);
+	}
+  }
+
+  // Burger menus (repurposed from https://tailwindcomponents.com/component/navbar-hamburger-menu)
+  function burgerMenuActions() {
+	// open
+	const burger = document.querySelectorAll('.navbar-burger');
+	const menu = document.querySelectorAll('.navbar-menu');
+
+	if (burger.length && menu.length) {
+		for (var i = 0; i < burger.length; i++) {
+			burger[i].addEventListener('click', function() {
+				for (var j = 0; j < menu.length; j++) {
+					menu[j].classList.toggle('hidden');
+				}
+			});
+		}
+	}
+
+	// close
+	const close = document.querySelectorAll('.navbar-close');
+	const backdrop = document.querySelectorAll('.navbar-backdrop');
+
+	if (close.length) {
+		for (var i = 0; i < close.length; i++) {
+			close[i].addEventListener('click', function() {
+				for (var j = 0; j < menu.length; j++) {
+					menu[j].classList.toggle('hidden');
+				}
+			});
+		}
+	}
+
+	if (backdrop.length) {
+		for (var i = 0; i < backdrop.length; i++) {
+			backdrop[i].addEventListener('click', function() {
+				for (var j = 0; j < menu.length; j++) {
+					menu[j].classList.toggle('hidden');
+				}
+			});
+		}
 	}
   }
 
