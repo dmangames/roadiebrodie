@@ -58,6 +58,11 @@ fn index(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
     )
 }
 
+#[get("/about")]
+fn about() -> Template {
+    Template::render("about", context! {})
+}
+
 /// User information to be retrieved from the Google People API.
 #[derive(serde::Deserialize)]
 struct GoogleUserInfo {
@@ -147,7 +152,7 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Template::fairing())
         .manage(MongoRepo::init())
-        .mount("/", routes![index, google_callback, google_login])
+        .mount("/", routes![index, google_callback, google_login, about])
         .mount("/public", FileServer::from(relative!("static")))
         .mount(
             "/api",
