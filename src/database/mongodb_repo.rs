@@ -7,7 +7,6 @@ use crate::models::Pin;
 use anyhow::Error;
 use mongodb::{
     bson::{self, doc, oid::ObjectId},
-    results::{DeleteResult, InsertOneResult, UpdateResult},
     sync::{Client, Collection},
 };
 
@@ -34,8 +33,20 @@ impl MongoRepo {
             bson::Bson::ObjectId(id) => Ok(id.to_hex()),
             _ => Err(anyhow::anyhow!("unexpected db response")),
         }?;
-        new_pin.id = Some(id);
-        Ok(new_pin)
+        new_pin.db_id = Some(id);
+        // Update the newly created pin to set the db_id field.
+        self.upsert_pin(new_pin)
+    }
+
+    pub fn upsert_pin(&self, pin: Pin) -> Result<Pin, Error> {
+        match &pin.db_id {
+            None => self.create_pin(pin),
+            Some(db_id) => {
+                let oid: ObjectId = db_id.parse()?;
+                self.col.replace_one(doc! {"_id": oid}, &pin, None)?;
+                Ok(pin)
+            }
+        }
     }
 
     pub fn get_pin(&self, id: &str) -> Result<Pin, Error> {
@@ -43,7 +54,7 @@ impl MongoRepo {
         let filter = doc! {"_id": obj_id};
         match self.col.find_one(filter, None)? {
             Some(mut pin) => {
-                pin.id = Some(id.to_string());
+                pin.db_id = Some(id.to_string());
                 Ok(pin)
             }
             None => Err(anyhow::anyhow!("not found")),
@@ -58,7 +69,7 @@ impl MongoRepo {
 }
 /*
 
-use mongodb::{ 
+use mongodb::{
     bson::doc,
     Client,
     Collection
@@ -88,3 +99,4 @@ async fn main() -> mongodb::error::Result<()> {
 }
 
 */
+

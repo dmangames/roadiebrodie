@@ -74,6 +74,7 @@ function initMap() {
 	{
 		myholytextelem;
 		id = 0;
+		db_id = "";
 		setId(newId){
 			this.id = newId;
 		}
@@ -102,18 +103,20 @@ function initMap() {
 
 			newButton.addEventListener('click', () => {
 				var noteData=textNode.textContent;
-				console.log("this.id = ", this.id);
+				var body = {data: noteData, position: pin_map.get(this.id).marker.position};
+				if (this.db_id != "") {
+					body.db_id = this.db_id;
+				}
 				fetch('/api/pin', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({	data: noteData, position: pin_map.get(this.id).marker.position}),
+					body: JSON.stringify(body),
 				})
-				.then(response => response.text())
+				.then(response => response.json())
 				.then((data) => {
-					this.id = data.id;
-					console.log(data);
+					this.db_id = data.db_id;
 				})
 				.catch((error) => {
 					console.error('Error:', error);
@@ -143,7 +146,7 @@ function initMap() {
 		var pin = Object.create(PinStruct).initialize(marker, infowindow);
 		pin_map.set(pin_id, pin);
 
-		pin_id += 1;
+		pin_id++;
 
 		marker.addListener("click", () => {
 			infowindow.open({
@@ -169,6 +172,7 @@ function initMap() {
 		data.forEach(element => {
 			let newPin = placeMarker(element.position);
 			newPin.infowindow.myholytextelem.textContent = element.data;
+			newPin.infowindow.db_id = element.db_id;
 		});
 	});
 }
