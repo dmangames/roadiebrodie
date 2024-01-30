@@ -58,22 +58,17 @@ fn index(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
     )
 }
 
-
-
 #[get("/pricing")]
 fn pricing() -> Template {
     Template::render("pricing", context! {})
 }
-
-
 
 #[get("/about")]
 fn about() -> Template {
     Template::render("about", context! {})
 }
 
-
-#[get("/templates/services.html.hbs")]
+#[get("/services")]
 fn services(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
     let user_name: Option<&str> = match maybe_user {
         Some(ref user) => Some(user.name.as_str()),
@@ -192,8 +187,18 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Template::fairing())
         .manage(MongoRepo::init())
-        .mount("/", routes![index, google_callback, google_login, about, contact, services])
-
+        .mount(
+            "/",
+            routes![
+                index,
+                google_callback,
+                google_login,
+                about,
+                contact,
+                services,
+                pricing,
+            ],
+        )
         .mount("/public", FileServer::from(relative!("static")))
         .mount(
             "/api",
