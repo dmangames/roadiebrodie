@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Roadie Brodie</title>
+    <title>About</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="public/style.css" />
@@ -12,8 +12,8 @@
     <div id="menu">
       {{!-- navbar menu --}}
       <nav class="relative px-4 py-4 flex justify-between items-center bg-white">
-        <a class="text-3xl text-blue-600 font-bold leading-none" href="/">
-          <h1>Roadie Brodie</h1>
+        <a class="text-3xl text-blue-600 font-bold leading-none" href="#">
+          <h1>Roadie Brodie About</h1>
         </a>
         {{!-- burger menu button (displays only on mobile sized screens) --}}
         <div class="lg:hidden">
@@ -25,31 +25,31 @@
           </button>
         </div>
         <ul class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:flex lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
-          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="/">Home</a></li>
+          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="#">Home</a></li>
           <li class="text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-4 h-4 current-fill" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
             </svg>
           </li>
-          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="/about">About Us</a></li>
+          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="#">About Us</a></li>
           <li class="text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-4 h-4 current-fill" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
             </svg>
           </li>
-          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="/templates/services.html.hbs">Services</a></li>
+          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="#">Services</a></li>
           <li class="text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-4 h-4 current-fill" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
             </svg>
           </li>
-          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="/pricing">Pricing</a></li>
+          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="#">Pricing</a></li>
           <li class="text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-4 h-4 current-fill" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
             </svg>
           </li>
-          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="/contact">Contact</a></li>
+          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="#">Contact</a></li>
         </ul>
         {{#if user_name}}
           <a href='/' class="hidden lg:inline-block py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200">
@@ -83,16 +83,16 @@
                 <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Home</a>
               </li>
               <li class="mb-1">
-                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="/about">About Us</a>
+                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">About Us</a>
               </li>
               <li class="mb-1">
-                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="/templates/services.html.hbs">Services</a>
+                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Services</a>
               </li>
               <li class="mb-1">
-                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="/pricing">Pricing</a>
+                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Pricing</a>
               </li>
               <li class="mb-1">
-                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="/contact">Contact</a>
+                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Contact</a>
               </li>
             </ul>
           </div>

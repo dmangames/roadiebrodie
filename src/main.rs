@@ -59,9 +59,17 @@ fn index(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
 }
 
 
+
 #[get("/pricing")]
 fn pricing() -> Template {
     Template::render("pricing", context! {})
+}
+
+
+
+#[get("/about")]
+fn about() -> Template {
+    Template::render("about", context! {})
 }
 
 
@@ -184,7 +192,7 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Template::fairing())
         .manage(MongoRepo::init())
-        .mount("/", routes![index, google_callback, google_login, contact, services])
+        .mount("/", routes![index, google_callback, google_login, about, contact, services])
 
         .mount("/public", FileServer::from(relative!("static")))
         .mount(
