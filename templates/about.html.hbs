@@ -6,7 +6,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="public/style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <script type="module" src="public/map.js"></script>
   </head>
   <body>
     <div id="menu">
@@ -113,7 +112,6 @@
         </nav>
       </div>
     </div>    <img src="public/roadiebrodie_compliant_logo.png" style="position: absolute; left: 4px; bottom: 2px; z-index: 6;"/>
-    <div id="map" style="position: relative; z-index: 1;"></div>
     {{#if user_name}}
       <div id="floating-panel" class="px-4 py-4 flex space-x-2 justify-center bg-white rounded-br-lg">
         <input id="hide-markers" type="button" value="Hide Markers" class="py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200 shadow drop-shadow-lg"/>
@@ -121,9 +119,6 @@
         <input id="delete-markers" type="button" value="Delete Markers" class="py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200 shadow drop-shadow-lg"/>
       </div>
     {{/if}}
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKEO56Z9pOTBe01gJgmPVSTCca6rg7ivQ&callback=initMap&v=weekly"
-      defer
-    ></script>
   </body>
+  <h1>Ask Michael why this page sucks.</h1>
 </html>
