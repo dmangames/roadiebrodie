@@ -4,6 +4,8 @@ let markers_map = new Map();
 let pin_id = 0;
 let pin_map = new Map(); // id (int) to pin struct
 
+document.addEventListener('DOMContentLoaded', burgerMenuActions);
+
 var PinStruct = {
 	marker: null,
 	infowindow: null,
@@ -84,13 +86,21 @@ function initMap() {
 		}
 
 		init(){
-			const divElem = document.createElement("div")
-			const textNode = document.createElement("p"); 
+
+			const divElem = document.createElement("div");
+			divElem.setAttribute("class", "container");
+
+			const textNode = document.createElement("textarea"); 
+			textNode.setAttribute("class", "textArea");
 			textNode.setAttribute("contenteditable", "true");
-			textNode.textContent = "Edit me!";
+			textNode.placeholder = "Edit me!";
+			
 			divElem.appendChild(textNode);
+
 			const newButton = document.createElement('button');
-			newButton.textContent = 'Save note!';
+			newButton.setAttribute("class", "saveBtn");
+			newButton.textContent = 'Save';
+
 			newButton.addEventListener('click', () => {
 				var noteData=textNode.textContent;
 				var body = {data: noteData, position: pin_map.get(this.id).marker.position};
@@ -117,12 +127,6 @@ function initMap() {
 			this.myholytextelem = textNode;
 		}
 	}
-
-	const contentString =
-			'<div id="content">' +
-			'<p contenteditable="true">Edit this content to add your own quote</p>' +
-			'<button type="button" onclick="this.getId()">Click Me!</button>' +
-			"</div>";
 	
 	function placeMarker(location) {
 		
@@ -162,7 +166,6 @@ function initMap() {
 
 	}
 	
-
 	// Load user pins
 	loadPins().then((data) => {
 		console.log(data);
@@ -199,4 +202,44 @@ function setMapOnAll(map) {
 	}
   }
 
+  // Burger menus (repurposed from https://tailwindcomponents.com/component/navbar-hamburger-menu)
+  function burgerMenuActions() {
+	// open
+	const burger = document.querySelectorAll('.navbar-burger');
+	const menu = document.querySelectorAll('.navbar-menu');
+
+	if (burger.length && menu.length) {
+		for (var i = 0; i < burger.length; i++) {
+			burger[i].addEventListener('click', function() {
+				for (var j = 0; j < menu.length; j++) {
+					menu[j].classList.toggle('hidden');
+				}
+			});
+		}
+	}
+
+	// close
+	const close = document.querySelectorAll('.navbar-close');
+	const backdrop = document.querySelectorAll('.navbar-backdrop');
+
+	if (close.length) {
+		for (var i = 0; i < close.length; i++) {
+			close[i].addEventListener('click', function() {
+				for (var j = 0; j < menu.length; j++) {
+					menu[j].classList.toggle('hidden');
+				}
+			});
+		}
+	}
+
+	if (backdrop.length) {
+		for (var i = 0; i < backdrop.length; i++) {
+			backdrop[i].addEventListener('click', function() {
+				for (var j = 0; j < menu.length; j++) {
+					menu[j].classList.toggle('hidden');
+				}
+			});
+		}
+	}
+  }
 window.initMap = initMap;
