@@ -58,9 +58,41 @@ fn index(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
     )
 }
 
+
 #[get("/pricing")]
 fn pricing() -> Template {
     Template::render("pricing", context! {})
+}
+
+
+#[get("/templates/services.html.hbs")]
+fn services(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
+    let user_name: Option<&str> = match maybe_user {
+        Some(ref user) => Some(user.name.as_str()),
+        None => None,
+    };
+
+    Template::render(
+        "services",
+        context! {
+            user_name: user_name,
+        },
+    )
+}
+
+#[get("/contact")]
+fn contact(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
+    let user_name: Option<&str> = match maybe_user {
+        Some(ref user) => Some(user.name.as_str()),
+        None => None,
+    };
+
+    Template::render(
+        "contact",
+        context! {
+            user_name: user_name,
+        },
+    )
 }
 
 /// User information to be retrieved from the Google People API.
@@ -152,7 +184,8 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Template::fairing())
         .manage(MongoRepo::init())
-        .mount("/", routes![index, google_callback, google_login, pricing])
+        .mount("/", routes![index, google_callback, google_login, contact, services])
+
         .mount("/public", FileServer::from(relative!("static")))
         .mount(
             "/api",
