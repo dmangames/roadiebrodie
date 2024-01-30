@@ -56,7 +56,7 @@ function initMap() {
     .addEventListener("click", hideMarkers);
 	document
     .getElementById("delete-markers")
-    .addEventListener("click", deleteMarkers)
+    .addEventListener("click", deleteMarkers);
 
 	const iconBase = 'public/';
 
@@ -102,7 +102,8 @@ function initMap() {
 			newButton.textContent = 'Save';
 
 			newButton.addEventListener('click', () => {
-				var noteData=textNode.textContent;
+				var noteData=textNode.value;
+				console.log(noteData);
 				var body = {data: noteData, position: pin_map.get(this.id).marker.position};
 				if (this.db_id != "") {
 					body.db_id = this.db_id;

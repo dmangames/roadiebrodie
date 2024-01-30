@@ -3,10 +3,10 @@
   <head>
     <title>Roadie Brodie</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="public/style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <script type="module" src="public/map.js"></script>
   </head>
   <body>
     <div id="menu">
@@ -31,13 +31,13 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
             </svg>
           </li>
-          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="/about">About Us</a></li>
+          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="#">About Us</a></li>
           <li class="text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-4 h-4 current-fill" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
             </svg>
           </li>
-          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="/templates/services.html.hbs">Services</a></li>
+          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="#">Services</a></li>
           <li class="text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="w-4 h-4 current-fill" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
@@ -49,7 +49,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v0m0 7v0m0 7v0m0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
             </svg>
           </li>
-          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="/contact">Contact</a></li>
+          <li><a class="text-sm text-gray-400 hover:text-blue-600 hover:font-bold" href="#">Contact</a></li>
         </ul>
         {{#if user_name}}
           <a href='/' class="hidden lg:inline-block py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200">
@@ -83,10 +83,10 @@
                 <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Home</a>
               </li>
               <li class="mb-1">
-                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="/about">About Us</a>
+                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">About Us</a>
               </li>
               <li class="mb-1">
-                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="/templates/services.html.hbs">Services</a>
+                <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Services</a>
               </li>
               <li class="mb-1">
                 <a class="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Pricing</a>
@@ -114,17 +114,7 @@
       </div>
     </div>
     <img src="public/roadiebrodie_compliant_logo.png" style="position: absolute; left: 4px; bottom: 2px; z-index: 6;"/>
-    <div id="map" style="position: relative; z-index: 1;"></div>
-    {{#if user_name}}
-      <div id="floating-panel" class="px-4 py-4 flex space-x-2 justify-center bg-white rounded-br-lg">
-        <input id="hide-markers" type="button" value="Hide Markers" class="py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200 shadow drop-shadow-lg"/>
-        <input id="show-markers" type="button" value="Show Markers" class="py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200 shadow drop-shadow-lg"/>
-        <input id="delete-markers" type="button" value="Delete Markers" class="py-2 px-6 bg-blue-500 hover:bg-blue-600 text-sm text-white font-bold rounded-xl transition duration-200 shadow drop-shadow-lg"/>
-      </div>
-    {{/if}}
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKEO56Z9pOTBe01gJgmPVSTCca6rg7ivQ&callback=initMap&v=weekly"
-      defer
-    ></script>
+    <h1>Contact</h1>
+    <p>Questions? Comments? Send them to <a href = "mailto: roadiebrodieapp@gmail.com">roadiebrodieapp@gmail.com</a> </p>
   </body>
 </html>
