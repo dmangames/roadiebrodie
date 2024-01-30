@@ -242,5 +242,4 @@ function setMapOnAll(map) {
 		}
 	}
   }
-
 window.initMap = initMap;
