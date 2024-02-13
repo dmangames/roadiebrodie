@@ -444,6 +444,10 @@ video {
   display: none;
 }
 
+html {
+  font-family: "Roboto", system-ui, sans-serif;
+}
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -564,13 +568,8 @@ html, body{
   z-index: 5;
   padding: 15px;
   text-align: center;
-  font-family: "Roboto", "sans-serif";
   line-height: 30px;
   padding-left: 10px;
-}
-
-#menu {
-  font-family: "Roboto", "sans-serif";
 }
 
 .gm-style-iw {
