@@ -43,20 +43,27 @@ async function loadPins() {
 
 function initMap() {
 	map = new google.maps.Map(document.getElementById("map"), {
-	center: new google.maps.LatLng(-33.91722, 151.23064),
-	zoom: 16,
+	center: new google.maps.LatLng(37.7749, -122.4194),
+	zoom: 8,
 	disableDoubleClickZoom: true,
 	});
 
-	document
-    .getElementById("show-markers")
-    .addEventListener("click", showMarkers);
-	document
-    .getElementById("hide-markers")
-    .addEventListener("click", hideMarkers);
-	document
-    .getElementById("delete-markers")
-    .addEventListener("click", deleteMarkers);
+	var show_marker_elem = document.getElementById("show-markers");
+	if(show_marker_elem)
+	{
+		show_marker_elem.addEventListener("click", showMarkers);
+	}
+	var hide_markers_elem = document.getElementById("hide-markers")
+	if(hide_markers_elem)
+	{
+		hide_markers_elem.addEventListener("click", hideMarkers);
+	}
+	var delete_markers_elem = document.getElementById("delete-markers");
+	if(delete_markers_elem)
+	{
+		delete_markers_elem.addEventListener("click", deleteMarkers);
+	}
+    
 
 	const iconBase = 'public/';
 
@@ -176,7 +183,37 @@ function initMap() {
 			newPin.infowindow.db_id = element.db_id;
 		});
 	});
+
+	//Directions
+	const directionsService = new google.maps.DirectionsService();
+	const directionsRenderer = new google.maps.DirectionsRenderer();
+  
+	directionsRenderer.setMap(map);
+  
+	const onChangeHandler = function () {
+	  calculateAndDisplayRoute(directionsService, directionsRenderer);
+	};
+  
+	document.getElementById("start").addEventListener("change", onChangeHandler);
+	document.getElementById("end").addEventListener("change", onChangeHandler);
 }
+
+function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+	directionsService
+	  .route({
+		origin: {
+		  query: document.getElementById("start").value,
+		},
+		destination: {
+		  query: document.getElementById("end").value,
+		},
+		travelMode: google.maps.TravelMode.DRIVING,
+	  })
+	  .then((response) => {
+		directionsRenderer.setDirections(response);
+	  })
+	  .catch((e) => window.alert("Directions request failed due to " + status));
+  }
 
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
