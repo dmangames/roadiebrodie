@@ -59,13 +59,33 @@ fn index(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
 }
 
 #[get("/pricing")]
-fn pricing() -> Template {
-    Template::render("pricing", context! {})
+fn pricing(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
+    let user_name: Option<&str> = match maybe_user {
+        Some(ref user) => Some(user.name.as_str()),
+        None => None,
+    };
+
+    Template::render(
+        "pricing",
+        context! {
+            user_name: user_name,
+        },
+    )
 }
 
 #[get("/about")]
-fn about() -> Template {
-    Template::render("about", context! {})
+fn about(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
+    let user_name: Option<&str> = match maybe_user {
+        Some(ref user) => Some(user.name.as_str()),
+        None => None,
+    };
+
+    Template::render(
+        "about",
+        context! {
+            user_name: user_name,
+        },
+    )
 }
 
 #[get("/services")]
