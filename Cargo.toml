@@ -12,6 +12,7 @@ anyhow = "1.0.75"
 oauth2 = "4.4.2"
 reqwest = { version = "0.11.22", features = ["json"] }
 rocket_oauth2 = "=0.5.0"
+tailwind-css = "0.13.0"
 
 [dependencies.rocket]
 version = "=0.5.0"

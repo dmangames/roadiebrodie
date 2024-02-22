@@ -3,6 +3,7 @@ use std::path::Path;
 use std::process::Command;
 
 fn main() {
+    env::set_var("RUST_BACKTRACE", "1");
     // Ensure we are in the project directory
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
     let project_dir = Path::new(&manifest_dir);
