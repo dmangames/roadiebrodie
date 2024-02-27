@@ -195,11 +195,13 @@ pub fn create_pin(
     }
 }
 
-#[delete("/pin/<id>")]
-fn delete_pin(id: &str) -> Result<Value, Status> {
-    Ok(json!({
-        "id": id,
-    }))
+#[delete("/delete_pin/<id>")]
+fn delete_pin(db: &State<MongoRepo>, id: &str) -> Result<(), Status> {
+    let pin = db.delete_pin(id);
+    match pin {
+        Ok(pin) => Ok(()),
+        Err(_) => Err(Status::NotFound),
+    }
 }
 
 #[launch]

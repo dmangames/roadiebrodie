@@ -111,6 +111,7 @@ function initMap() {
 			newButton.addEventListener('click', () => {
 				var noteData=textNode.value;
 				console.log(noteData);
+				console.log(this.db_id);
 				var body = {data: noteData, position: pin_map.get(this.id).marker.position};
 				if (this.db_id != "") {
 					body.db_id = this.db_id;
@@ -168,6 +169,12 @@ function initMap() {
 		marker.addListener("dblclick", function() {
 			marker.setMap(null);
 			markers_map.delete(marker.position);
+			fetch(`/api/delete_pin/${infowindow.db_id}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			})
 		});
 
 		return pin;
