@@ -77,3 +77,20 @@ textArea:focus {
 	grid-row-start: 3;
 	grid-row-end: 4;
 }
+
+.deleteBtn {
+	color: white;
+	background-color: rgb(236, 33, 33);
+	text-align: center;
+	border: solid 1px;
+	border-radius: 5px;
+	padding: 5px;
+	height: 30px;
+	width: 70px;
+	margin: auto;
+	grid-column-start: 3;
+	grid-column-end: 4;
+	grid-row-start: 3;
+	grid-row-end: 4;
+}
+

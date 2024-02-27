@@ -66,6 +66,16 @@ impl MongoRepo {
         let cursor = self.col.find(filter, None)?;
         Ok(cursor.collect::<Result<_, _>>()?)
     }
+
+    pub fn delete_pin(&self, id: &str) -> Result<(), Error> {
+        let obj_id = ObjectId::parse_str(id)?;
+        let filter = doc! {"_id": obj_id};
+        let result = self.col.delete_one(filter, None)?;
+        println!("Deleted documents: {}", result.deleted_count);
+        println!("Deleted id: {}", id);
+
+        Ok(())
+    }
 }
 /*
 
