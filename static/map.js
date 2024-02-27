@@ -1,8 +1,8 @@
 let map;
-let markers_map = new Map();
 
 let pin_id = 0;
-let pin_map = new Map(); // id (int) to pin struct
+let fake_id = "temp" + pin_id;
+let pin_map = new Map(); // id (int) to pin struct <db_id, pin_struct>
 
 document.addEventListener('DOMContentLoaded', burgerMenuActions);
 
@@ -80,13 +80,16 @@ function initMap() {
 	class NoteWindow extends google.maps.InfoWindow
 	{
 		myholytextelem;
-		id = 0;
+		hasBeenSaved = false;
 		db_id = "";
 		setId(newId){
-			this.id = newId;
+			this.db_id = newId;
 		}
 		getId(){
-			return this.id;
+			return this.db_id;
+		}
+		setHasBeenSaved(wasSaved){
+			this.hasBeenSaved = wasSaved;
 		}
 		content_changed(){
 			console.log("it changed");
@@ -104,15 +107,15 @@ function initMap() {
 			
 			divElem.appendChild(textNode);
 
-			const newButton = document.createElement('button');
-			newButton.setAttribute("class", "saveBtn");
-			newButton.textContent = 'Save';
+			const saveButton = document.createElement('button');
+			saveButton.setAttribute("class", "saveBtn");
+			saveButton.textContent = 'Save';
 
-			newButton.addEventListener('click', () => {
+			saveButton.addEventListener('click', () => {
 				var noteData=textNode.value;
 				console.log(noteData);
-				var body = {data: noteData, position: pin_map.get(this.id).marker.position};
-				if (this.db_id != "") {
+				var body = {data: noteData, position: pin_map.get(this.db_id).marker.position};
+				if (this.hasBeenSaved) {
 					body.db_id = this.db_id;
 				}
 				fetch('/api/pin', {
@@ -124,19 +127,49 @@ function initMap() {
 				})
 				.then(response => response.json())
 				.then((data) => {
-					this.db_id = data.db_id;
+					if(!pin_map.has(data.db_id))
+					{
+						pin_map.set(data.db_id, pin_map.get(this.db_id));
+						pin_map.delete(this.db_id);	
+						this.db_id = data.db_id;
+					}
+					this.hasBeenSaved = true;
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+				});
+			});
+
+			const deleteButton = document.createElement('button');
+			deleteButton.setAttribute("class", "deleteBtn");
+			deleteButton.textContent = 'Delete';
+
+			deleteButton.addEventListener('click', () => {
+				fetch(`/api/delete_pin/${this.db_id}`, {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				})
+				.then((data) => {
+					console.log(data);
+					pin_map.get(this.db_id).marker.setMap(null);
+					pin_map.delete(this.db_id);
 				})
 				.catch((error) => {
 					console.error('Error:', error);
 				});
 				});
-			divElem.appendChild(newButton);
+
+
+			divElem.appendChild(saveButton);
+			divElem.appendChild(deleteButton);
 			this.setContent(divElem);
 			this.myholytextelem = textNode;
 		}
 	}
 	
-	function placeMarker(location) {
+	function placeMarker(location, db_id=fake_id) {
 		
 		const marker = new google.maps.Marker({
 		position: location,
@@ -144,15 +177,14 @@ function initMap() {
 		map: map,
 		});
 
-		//set map with (latitude, longitude) as key - with parentheses around coordinate
-		markers_map.set(location, marker);
-
 		const infowindow = new NoteWindow();
-		infowindow.setId(pin_id);
+		infowindow.setId(db_id);
+		infowindow.setHasBeenSaved(db_id != fake_id);
 		infowindow.init();
 
 		var pin = Object.create(PinStruct).initialize(marker, infowindow);
-		pin_map.set(pin_id, pin);
+		console.log(`Created pin: ${db_id}`);
+		pin_map.set(db_id, pin);
 
 		pin_id++;
 
@@ -162,12 +194,13 @@ function initMap() {
 			  map,
 			});
 			console.log(infowindow.getId());
+			console.log(infowindow);
 		});
 
 		//double click to delete pin
 		marker.addListener("dblclick", function() {
 			marker.setMap(null);
-			markers_map.delete(marker.position);
+			pin_map.delete(db_id);
 		});
 
 		return pin;
@@ -178,7 +211,7 @@ function initMap() {
 	loadPins().then((data) => {
 		console.log(data);
 		data.forEach(element => {
-			let newPin = placeMarker(element.position);
+			let newPin = placeMarker(element.position, element.db_id);
 			newPin.infowindow.myholytextelem.textContent = element.data;
 			newPin.infowindow.db_id = element.db_id;
 		});
@@ -217,8 +250,8 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
-	for (let pair of markers_map.entries()){
-		markers_map.get(pair[0]).setMap(map);
+	for (let pair of pin_map.entries()){
+		pair[1].marker.setMap(map);
 	}
   }
   
@@ -235,9 +268,7 @@ function setMapOnAll(map) {
   // Deletes all markers in the array by removing references to them.
   function deleteMarkers() {
 	hideMarkers();
-	for (let pair of markers_map.entries()){
-		markers_map.delete(pair[0]);
-	}
+	pin_map.clear();
   }
 
   // Burger menus (repurposed from https://tailwindcomponents.com/component/navbar-hamburger-menu)
