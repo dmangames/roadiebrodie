@@ -218,8 +218,15 @@ function initMap() {
 	});
 
 	//Directions
+	var defaultInfoWindow = new google.maps.InfoWindow();
 	const directionsService = new google.maps.DirectionsService();
-	const directionsRenderer = new google.maps.DirectionsRenderer();
+	const directionsRenderer = new google.maps.DirectionsRenderer({
+		polylineOptions: {
+			strokeColor: "#1E90FF",
+		},
+		infoWindow: defaultInfoWindow,
+		draggable: true,
+	  });
   
 	directionsRenderer.setMap(map);
   
