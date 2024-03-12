@@ -1,6 +1,7 @@
 let isDragging = false;
 let offsetX, offsetY;
 
+console.log("script.js called")
 document.getElementById("extraPanel").addEventListener("mousedown", startDrag);
 document.addEventListener("mousemove", drag);
 document.addEventListener("mouseup", endDrag);

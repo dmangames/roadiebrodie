@@ -25,8 +25,36 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKEO56Z9pOTBe01gJgmPVSTCca6rg7ivQ&callback=initMap&v=weekly&libraries=places"
       defer
     ></script>
-    <script src="poi.hbs"></script>
-    <script src="script.js"></script>
+    <script type="text/x-handlebars-template" src="poi.hbs"></script>
+    <script>
+      let isDragging = false;
+      let offsetX, offsetY;
+
+      document.getElementById("extraPanel").addEventListener("mousedown", startDrag);
+      document.addEventListener("mousemove", drag);
+      document.addEventListener("mouseup", endDrag);
+
+      function startDrag(event) {
+        isDragging = true;
+        const boundingRect = document.getElementById("extraPanel").getBoundingClientRect();
+        offsetX = event.clientX - boundingRect.left;
+        offsetY = event.clientY - boundingRect.top;
+      }
+
+      function drag(event) {
+        if (isDragging) {
+          const panel = document.getElementById("extraPanel");
+          const newX = event.clientX - offsetX;
+          const newY = event.clientY - offsetY;
+          panel.style.left = newX + "px";
+          panel.style.top = newY + "px";
+        }
+      }
+
+      function endDrag(event) {
+        isDragging = false;
+      }
+    </script>
     
   </body>
 </html>

@@ -575,9 +575,7 @@ html, body{
 .extra-panel{
   position: fixed;
   top: 50%;
-  left: 20px;
-  /* Adjust the left positioning as needed */
-  transform: translateY(-50%);
+  left: 0;
   background-color: white;
   padding: 20px;
   border: 1px solid #719ECE;
