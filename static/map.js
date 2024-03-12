@@ -4,6 +4,9 @@ let pin_id = 0;
 let fake_id = "temp" + pin_id;
 let pin_map = new Map(); // id (int) to pin struct <db_id, pin_struct>
 
+var ROUTE_DISTANCE_DIVISOR = 13000; // route distance in m / this == distance from route to search
+var boxes = null;
+
 document.addEventListener('DOMContentLoaded', burgerMenuActions);
 
 var PinStruct = {
@@ -47,6 +50,8 @@ function initMap() {
 	zoom: 8,
 	disableDoubleClickZoom: true,
 	});
+
+	initRB();
 
 	var show_marker_elem = document.getElementById("show-markers");
 	if(show_marker_elem)
@@ -238,22 +243,60 @@ function initMap() {
 	document.getElementById("end").addEventListener("change", onChangeHandler);
 }
 
+// Draw the array of boxes as polylines on the map
+function drawBoxes(boxes){
+	var boxpolys = new Array(boxes.length);
+	for (var i = 0; i < boxes.length; i++) {
+	  boxpolys[i] = new google.maps.Rectangle({
+		bounds: boxes[i],
+		fillOpacity: 0,
+		strokeOpacity: 1.0,
+		strokeColor: '#000000',
+		strokeWeight: 1,
+		map: map
+	  });
+	}
+  };
+
 function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 	directionsService
 	  .route({
 		origin: {
 		  query: document.getElementById("start").value,
-		},
+		},	
 		destination: {
 		  query: document.getElementById("end").value,
 		},
 		travelMode: google.maps.TravelMode.DRIVING,
 	  })
 	  .then((response) => {
+		console.log("How about here?");
+
+		//Use Route boxer to define bounding area to seach in for Places
+		var rboxer = new RouteBoxer();
+		console.log("After route boxer");
+
+		var route = response.routes[0];
+		console.log("route:", route);
+		var path = response.overview_path;
+
+		console.log(path);
+
+		dist = route.legs[0].distance.value/ROUTE_DISTANCE_DIVISOR;
+        boxes = rboxer.box(path, dist);
+
+		console.log("Do we get here?");
+
+		console.log(boxes);
+		//Draw debug boxes
+		drawBoxes(boxes);
+
 		directionsRenderer.setDirections(response);
 	  })
 	  .catch((e) => window.alert("Directions request failed due to " + status));
   }
+
+
 
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
