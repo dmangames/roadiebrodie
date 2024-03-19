@@ -6,6 +6,7 @@ let pin_map = new Map(); // id (int) to pin struct <db_id, pin_struct>
 
 var ROUTE_DISTANCE_DIVISOR = 13000; // route distance in m / this == distance from route to search
 var boxes = null;
+var routeBoxer = null;
 
 document.addEventListener('DOMContentLoaded', burgerMenuActions);
 
@@ -51,7 +52,8 @@ function initMap() {
 	disableDoubleClickZoom: true,
 	});
 
-	initRB();
+	routeBoxer = new RouteBoxer();
+	console.log("RouteBoxer init: ", routeBoxer);
 
 	var show_marker_elem = document.getElementById("show-markers");
 	if(show_marker_elem)
@@ -273,17 +275,19 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 		console.log("How about here?");
 
 		//Use Route boxer to define bounding area to seach in for Places
-		var rboxer = new RouteBoxer();
-		console.log("After route boxer");
-
 		var route = response.routes[0];
 		console.log("route:", route);
-		var path = response.overview_path;
+		var path = route.overview_path;
 
 		console.log(path);
 
-		dist = route.legs[0].distance.value/ROUTE_DISTANCE_DIVISOR;
-        boxes = rboxer.box(path, dist);
+		var dist = route.legs[0].distance.value/ROUTE_DISTANCE_DIVISOR;
+
+		console.log("dist: ", dist);
+
+		console.log("route boxer still exists?", routeBoxer);
+		
+        boxes = routeBoxer.box(path, 10);
 
 		console.log("Do we get here?");
 
