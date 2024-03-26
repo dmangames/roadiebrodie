@@ -237,13 +237,14 @@ function initMap() {
   
 	directionsRenderer.setMap(map);
   
-	const onChangeHandler = function () {
-	  calculateAndDisplayRoute(directionsService, directionsRenderer);
-	};
-  
-	document.getElementById("start").addEventListener("change", onChangeHandler);
-	document.getElementById("end").addEventListener("change", onChangeHandler);
+	document.addEventListener('keydown', function(event) {
+		if (event.key === 'Enter') {
+			calculateAndDisplayRoute(directionsService, directionsRenderer);
+		}
+	});
+	
 }
+
 
 // Draw the array of boxes as polylines on the map
 function drawBoxes(boxes){
@@ -297,7 +298,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 
 		directionsRenderer.setDirections(response);
 	  })
-	  .catch((e) => window.alert("Directions request failed due to " + status));
+	  .catch((e) => window.alert("Directions request failed due to " + e));
   }
 
 
