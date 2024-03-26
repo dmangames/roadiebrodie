@@ -4,7 +4,7 @@ let pin_id = 0;
 let fake_id = "temp" + pin_id;
 let pin_map = new Map(); // id (int) to pin struct <db_id, pin_struct>
 
-var ROUTE_DISTANCE_DIVISOR = 13000; // route distance in m / this == distance from route to search
+var ROUTE_DISTANCE_DIVISOR = 15000; // route distance in m / this == distance from route to search
 var boxes = null;
 var routeBoxer = null;
 
@@ -238,7 +238,9 @@ function initMap() {
 	directionsRenderer.setMap(map);
   
 	const onChangeHandler = function () {
-	  calculateAndDisplayRoute(directionsService, directionsRenderer);
+	  var boxes = calculateAndDisplayRoute(directionsService, directionsRenderer);
+	  // Search places API using bounding boxes.
+	  boxes.then((boxes)=>{searchNearbyPlaces(boxes)});
 	};
   
 	document.getElementById("start").addEventListener("change", onChangeHandler);
@@ -260,8 +262,13 @@ function drawBoxes(boxes){
 	}
   };
 
-function calculateAndDisplayRoute(directionsService, directionsRenderer) {
-	directionsService
+async function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+	// const boxesPromise = new Promise((resolve, reject) => {
+
+	// });
+	
+	var boxes;
+	await directionsService
 	  .route({
 		origin: {
 		  query: document.getElementById("start").value,
@@ -283,11 +290,15 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 
 		var dist = route.legs[0].distance.value/ROUTE_DISTANCE_DIVISOR;
 
+		while(dist > 100) {
+			dist *= .5;
+		}
+
 		console.log("dist: ", dist);
 
 		console.log("route boxer still exists?", routeBoxer);
 		
-        boxes = routeBoxer.box(path, 10);
+        boxes = routeBoxer.box(path, dist);
 
 		console.log("Do we get here?");
 
@@ -298,9 +309,28 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 		directionsRenderer.setDirections(response);
 	  })
 	  .catch((e) => window.alert("Directions request failed due to " + status));
+
+	  return boxes;
   }
 
-
+  function searchNearbyPlaces(boxes) {
+	console.log('searching nearby places, master');
+	console.log('boxes[0] from searchNearbyPlaces: ' + boxes[0]);
+	var request = {
+		query: 'Burger King',
+		fields: ['name', 'geometry'],
+		locationBias: boxes[0] //location returns in geometry -> location -> lat -> scope -> block
+	};
+	service = new google.maps.places.PlacesService(map);
+	service.findPlaceFromQuery(request, (results, status) => {
+		if (status == google.maps.places.PlacesServiceStatus.OK) {
+			for (var i = 0; i < results.length; i++) {
+			  console.log(results[i]);
+			}
+			map.setCenter(results[0].geometry.location);
+		}
+	});
+  }
 
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
@@ -364,5 +394,13 @@ function setMapOnAll(map) {
 			});
 		}
 	}
+  }
+
+
+  function updatePOIs() {
+	 var POIs = [{"name": "McDonalds", "distance": "10km"}, {"name": "Burger King", "distance": "12km"}];
+	//   // find the element we are going to edit
+	//    document.getElementById("extraPanel").innerHTML = {{< poi_item}};
+	  
   }
 window.initMap = initMap;
