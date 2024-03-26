@@ -237,12 +237,11 @@ function initMap() {
   
 	directionsRenderer.setMap(map);
   
-	const onChangeHandler = function () {
-	  calculateAndDisplayRoute(directionsService, directionsRenderer);
-	};
-  
-	document.getElementById("route").addEventListener("click", onChangeHandler);
-	
+	document.addEventListener('keydown', function(event) {
+		if (event.key === 'Enter') {
+			calculateAndDisplayRoute(directionsService, directionsRenderer);
+		}
+	});
 	
 }
 
