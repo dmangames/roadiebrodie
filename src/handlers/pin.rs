@@ -27,7 +27,7 @@ fn get_user_pins(user: User, db: &State<MongoRepo>) -> Result<Json<Vec<Pin>>, St
 
 #[post("/pin", data = "<input>")]
 fn create_pin(db: &State<MongoRepo>, user: User, input: Json<Pin>) -> Result<Json<Pin>, Status> {
-    let data = Pin {
+    let data: Pin = Pin {
         user_id: Some(user.id),
         ..input.0
     };

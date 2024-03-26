@@ -31,6 +31,21 @@ html, body{
 	padding-left: 10px;
   }
 
+.extra-panel{
+	position: fixed;
+	top: 50%;
+	left: 0;
+	background-color: white;
+	padding: 20px;
+	border: 1px solid #719ECE;
+	box-shadow: 0 2px 4px #719ECE;
+	z-index: 10;
+	width: 200px;
+	height: 200px;
+	border-radius: 10px;
+	cursor: move;
+}
+
 .gm-style-iw {
 width: 300px; 
 min-height: 150px;
