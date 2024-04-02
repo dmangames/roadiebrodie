@@ -241,11 +241,9 @@ function initMap() {
 	  calculateAndDisplayRoute(directionsService, directionsRenderer);
 	};
   
-	document.getElementById("route").addEventListener("click", onChangeHandler);
-	
-	
+	document.getElementById("start").addEventListener("change", onChangeHandler);
+	document.getElementById("end").addEventListener("change", onChangeHandler);
 }
-
 
 // Draw the array of boxes as polylines on the map
 function drawBoxes(boxes){
@@ -299,7 +297,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 
 		directionsRenderer.setDirections(response);
 	  })
-	  .catch((e) => window.alert("Directions request failed due to " + e));
+	  .catch((e) => window.alert("Directions request failed due to " + status));
   }
 
 
