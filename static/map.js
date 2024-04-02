@@ -238,7 +238,10 @@ function initMap() {
 	directionsRenderer.setMap(map);
   
 	const onChangeHandler = function () {
-	  calculateAndDisplayRoute(directionsService, directionsRenderer);
+		if (document.getElementById("start").value == '' || document.getElementById("end").value == '') {
+			return;
+		}
+		calculateAndDisplayRoute(directionsService, directionsRenderer);
 	};
   
 	document.getElementById("start").addEventListener("change", onChangeHandler);
