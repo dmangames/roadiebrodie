@@ -103,3 +103,46 @@
     </div>
 </div>
 <img src="public/roadiebrodie_compliant_logo.png" style="position: absolute; left: 4px; bottom: 2px; z-index: 6;"/>
+
+<script>
+    document.addEventListener('DOMContentLoaded', burgerMenuActions);
+    // Burger menus (repurposed from https://tailwindcomponents.com/component/navbar-hamburger-menu)
+     function burgerMenuActions() {
+     	// open
+     	const burger = document.querySelectorAll('.navbar-burger');
+     	const menu = document.querySelectorAll('.navbar-menu')
+     	if (burger.length && menu.length) {
+     		for (var i = 0; i < burger.length; i++) {
+     			burger[i].addEventListener('click', function() {
+     				for (var j = 0; j < menu.length; j++) {
+     					menu[j].classList.toggle('hidden');
+     				}
+     			});
+     		}
+     	}
+     }
+
+	// close
+	 const close = document.querySelectorAll('.navbar-close');
+	 const backdrop = document.querySelectorAll('.navbar-backdrop');
+
+	 if (close.length) {
+	 	for (var i = 0; i < close.length; i++) {
+	 		close[i].addEventListener('click', function() {
+	 			for (var j = 0; j < menu.length; j++) {
+	 				menu[j].classList.toggle('hidden');
+	 			}
+	 		});
+	 	}
+	 }
+
+	 if (backdrop.length) {
+	 	for (var i = 0; i < backdrop.length; i++) {
+ 		    backdrop[i].addEventListener('click', function() {
+	 			for (var j = 0; j < menu.length; j++) {
+	 				menu[j].classList.toggle('hidden');
+	 			}
+	 		});
+	 	}
+	 }
+</script>

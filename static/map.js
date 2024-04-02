@@ -1,14 +1,15 @@
+var roadieMap = (function(){
+
 let map;
 
 let pin_id = 0;
 let fake_id = "temp" + pin_id;
 let pin_map = new Map(); // id (int) to pin struct <db_id, pin_struct>
 
-var ROUTE_DISTANCE_DIVISOR = 13000; // route distance in m / this == distance from route to search
+var ROUTE_DISTANCE_DIVISOR = 15000; // route distance in m / this == distance from route to search
 var boxes = null;
 var routeBoxer = null;
 
-document.addEventListener('DOMContentLoaded', burgerMenuActions);
 
 var PinStruct = {
 	marker: null,
@@ -44,7 +45,7 @@ async function loadPins() {
 }
 
    
-
+// put everything that needs google api inside initMap
 function initMap() {
 	map = new google.maps.Map(document.getElementById("map"), {
 	center: new google.maps.LatLng(37.7749, -122.4194),
@@ -238,72 +239,104 @@ function initMap() {
 	directionsRenderer.setMap(map);
   
 	const onChangeHandler = function () {
-		if (document.getElementById("start").value == '' || document.getElementById("end").value == '') {
+    if (document.getElementById("start").value == '' || document.getElementById("end").value == '') {
 			return;
 		}
-		calculateAndDisplayRoute(directionsService, directionsRenderer);
+	  var boxes = calculateAndDisplayRoute(directionsService, directionsRenderer);
+	  // Search places API using bounding boxes.
+	  boxes.then((boxes)=>{searchNearbyPlaces(boxes)});
 	};
   
 	document.getElementById("start").addEventListener("change", onChangeHandler);
 	document.getElementById("end").addEventListener("change", onChangeHandler);
-}
 
-// Draw the array of boxes as polylines on the map
-function drawBoxes(boxes){
-	var boxpolys = new Array(boxes.length);
-	for (var i = 0; i < boxes.length; i++) {
-	  boxpolys[i] = new google.maps.Rectangle({
-		bounds: boxes[i],
-		fillOpacity: 0,
-		strokeOpacity: 1.0,
-		strokeColor: '#000000',
-		strokeWeight: 1,
-		map: map
-	  });
-	}
-  };
+	// Draw the array of boxes as polylines on the map
+	function drawBoxes(boxes){
+		var boxpolys = new Array(boxes.length);
+		for (var i = 0; i < boxes.length; i++) {
+		boxpolys[i] = new google.maps.Rectangle({
+			bounds: boxes[i],
+			fillOpacity: 0,
+			strokeOpacity: 1.0,
+			strokeColor: '#000000',
+			strokeWeight: 1,
+			map: map
+		});
+		}
+	};
 
-function calculateAndDisplayRoute(directionsService, directionsRenderer) {
-	directionsService
-	  .route({
-		origin: {
-		  query: document.getElementById("start").value,
-		},	
-		destination: {
-		  query: document.getElementById("end").value,
-		},
-		travelMode: google.maps.TravelMode.DRIVING,
-	  })
-	  .then((response) => {
-		console.log("How about here?");
+	async function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+		// const boxesPromise = new Promise((resolve, reject) => {
 
-		//Use Route boxer to define bounding area to seach in for Places
-		var route = response.routes[0];
-		console.log("route:", route);
-		var path = route.overview_path;
-
-		console.log(path);
-
-		var dist = route.legs[0].distance.value/ROUTE_DISTANCE_DIVISOR;
-
-		console.log("dist: ", dist);
-
-		console.log("route boxer still exists?", routeBoxer);
+		// });
 		
-        boxes = routeBoxer.box(path, 10);
+		var boxes;
+		await directionsService
+		.route({
+			origin: {
+			query: document.getElementById("start").value,
+			},	
+			destination: {
+			query: document.getElementById("end").value,
+			},
+			travelMode: google.maps.TravelMode.DRIVING,
+		})
+		.then((response) => {
+			console.log("How about here?");
 
-		console.log("Do we get here?");
+			//Use Route boxer to define bounding area to seach in for Places
+			var route = response.routes[0];
+			console.log("route:", route);
+			var path = route.overview_path;
 
-		console.log(boxes);
-		//Draw debug boxes
-		drawBoxes(boxes);
+			console.log(path);
 
-		directionsRenderer.setDirections(response);
-	  })
-	  .catch((e) => window.alert("Directions request failed due to " + status));
-  }
+			var dist = route.legs[0].distance.value/ROUTE_DISTANCE_DIVISOR;
 
+			while(dist > 100) {
+				dist *= .5;
+			}
 
+			console.log("dist: ", dist);
+
+			console.log("route boxer still exists?", routeBoxer);
+			
+			boxes = routeBoxer.box(path, dist);
+
+			console.log("Do we get here?");
+
+			console.log(boxes);
+			//Draw debug boxes
+			drawBoxes(boxes);
+
+			directionsRenderer.setDirections(response);
+		})
+		.catch((e) => window.alert("Directions request failed due to " + status));
+
+		return boxes;
+	}
+
+	function searchNearbyPlaces(boxes) {
+		console.log('searching nearby places, master');
+		console.log('boxes[0] from searchNearbyPlaces: ' + boxes[0]);
+		service = new google.maps.places.PlacesService(map);
+		for (const box of boxes) {
+			var request = {
+				query: 'Burger King',
+				fields: ['name', 'geometry'],
+				locationBias: box //location returns in geometry -> location -> lat -> scope -> block
+			};
+			service.findPlaceFromQuery(request, (results, status) => {
+				if (status == google.maps.places.PlacesServiceStatus.OK) {
+					for (var i = 0; i < results.length; i++) {
+						console.log(results[i]);
+						placeMarker(results[i].geometry.location);
+					}
+					map.setCenter(results[0].geometry.location);
+				}
+			});
+		}
+	}
 
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
@@ -328,44 +361,22 @@ function setMapOnAll(map) {
 	pin_map.clear();
   }
 
-  // Burger menus (repurposed from https://tailwindcomponents.com/component/navbar-hamburger-menu)
-  function burgerMenuActions() {
-	// open
-	const burger = document.querySelectorAll('.navbar-burger');
-	const menu = document.querySelectorAll('.navbar-menu');
-
-	if (burger.length && menu.length) {
-		for (var i = 0; i < burger.length; i++) {
-			burger[i].addEventListener('click', function() {
-				for (var j = 0; j < menu.length; j++) {
-					menu[j].classList.toggle('hidden');
-				}
-			});
-		}
-	}
-
-	// close
-	const close = document.querySelectorAll('.navbar-close');
-	const backdrop = document.querySelectorAll('.navbar-backdrop');
-
-	if (close.length) {
-		for (var i = 0; i < close.length; i++) {
-			close[i].addEventListener('click', function() {
-				for (var j = 0; j < menu.length; j++) {
-					menu[j].classList.toggle('hidden');
-				}
-			});
-		}
-	}
-
-	if (backdrop.length) {
-		for (var i = 0; i < backdrop.length; i++) {
-			backdrop[i].addEventListener('click', function() {
-				for (var j = 0; j < menu.length; j++) {
-					menu[j].classList.toggle('hidden');
-				}
-			});
-		}
-	}
   }
-window.initMap = initMap;
+
+
+  function updatePOIs() {
+	 var POIs = [{"name": "McDonalds", "distance": "10km"}, {"name": "Burger King", "distance": "12km"}];
+	    //find the element we are going to edit
+	    //document.getElementById("extraPanel").innerHTML = {{< poi_item}};
+	  
+  }
+
+
+  return {
+	init: function() {
+		return initMap();
+	}
+};
+
+// window.initMap = initMap;
+}());
