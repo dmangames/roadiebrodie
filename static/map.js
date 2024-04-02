@@ -239,6 +239,9 @@ function initMap() {
 	directionsRenderer.setMap(map);
   
 	const onChangeHandler = function () {
+    if (document.getElementById("start").value == '' || document.getElementById("end").value == '') {
+			return;
+		}
 	  var boxes = calculateAndDisplayRoute(directionsService, directionsRenderer);
 	  // Search places API using bounding boxes.
 	  boxes.then((boxes)=>{searchNearbyPlaces(boxes)});
