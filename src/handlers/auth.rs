@@ -5,6 +5,9 @@ use reqwest::header::AUTHORIZATION;
 use rocket::http::{Cookie, CookieJar, SameSite};
 use rocket::response::{Debug, Redirect};
 use rocket_oauth2::{OAuth2, TokenResponse};
+use rocket::serde::json::Json;
+
+use super::User;
 
 /// User information to be retrieved from the Google People API.
 #[derive(serde::Deserialize)]
@@ -46,4 +49,9 @@ pub async fn google_callback(
     add_cookie("user_id", user_info.id);
     add_cookie("user_name", user_info.given_name);
     Ok(Redirect::to("/"))
+}
+
+#[get("/user")]
+pub fn user(user: User) -> Json<User> {
+    Json(user)
 }

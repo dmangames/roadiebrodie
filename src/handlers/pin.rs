@@ -18,9 +18,9 @@ fn get_pin(db: &State<MongoRepo>, id: &str) -> Result<Json<Pin>, Status> {
 
 #[get("/pins")]
 fn get_user_pins(user: User, db: &State<MongoRepo>) -> Result<Json<Vec<Pin>>, Status> {
-    let pin = db.get_pins_by_userid(&user.id);
-    match pin {
-        Ok(pin) => Ok(Json(pin)),
+    let pins_result = db.get_pins_by_userid(&user.id);
+    match pins_result {
+        Ok(pins) => Ok(Json(pins)),
         Err(_) => Err(Status::NotFound),
     }
 }
