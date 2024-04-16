@@ -44,6 +44,9 @@ async function loadPins() {
 	});
 }
 
+const getCookieValue = (name) => (
+	document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+  )
    
 // put everything that needs google api inside initMap
 function initMap() {
@@ -79,6 +82,9 @@ function initMap() {
 		yellow_pin: {
 			icon: iconBase + "rb_pin.png",
 		},
+		blue_pin: {
+			icon: iconBase + "blue_pin.png",
+		}
 	};
 	
 	google.maps.event.addListener(map, 'dblclick', function(event){
@@ -111,8 +117,17 @@ function initMap() {
 			const textNode = document.createElement("textarea"); 
 			textNode.setAttribute("class", "textArea");
 			textNode.setAttribute("contenteditable", "true");
-			textNode.placeholder = "Edit me!";
-			
+
+			let signin = document.getElementById("signin");
+			if(signin)
+			{
+				textNode.placeholder = "STOP!!!!! FOR THE LOVE OF GOD LOG IN FIRST BEFORE YOU REGRET EVERYTHING!!!!!";
+			}
+			else
+			{
+				textNode.placeholder = "Edit me!";
+			}
+
 			divElem.appendChild(textNode);
 
 			const saveButton = document.createElement('button');
@@ -177,11 +192,11 @@ function initMap() {
 		}
 	}
 	
-	function placeMarker(location, db_id=fake_id) {
+	function placeMarker(location, db_id=fake_id, icon_path="yellow_pin") {
 		
 		const marker = new google.maps.Marker({
 		position: location,
-		icon: icons["yellow_pin"].icon,
+		icon: icons[icon_path].icon,
 		map: map,
 		});
 
@@ -330,7 +345,7 @@ function initMap() {
 				if (status == google.maps.places.PlacesServiceStatus.OK) {
 					for (var i = 0; i < results.length; i++) {
 						console.log(results[i]);
-						placeMarker(results[i].geometry.location);
+						placeMarker(results[i].geometry.location, fake_id, "blue_pin");
 					}
 					map.setCenter(results[0].geometry.location);
 				}

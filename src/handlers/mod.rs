@@ -18,6 +18,7 @@ pub fn root_handlers() -> Vec<Route> {
         index,
         auth::google_callback,
         auth::google_login,
+        auth::user,
         about,
         contact,
         services,
@@ -32,7 +33,7 @@ pub fn api_handlers() -> Vec<Route> {
         .collect()
 }
 
-#[derive(Debug)]
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct User {
     id: String,
     name: String,
@@ -57,6 +58,7 @@ impl<'r> FromRequest<'r> for User {
         }
     }
 }
+
 #[get("/")]
 fn index(maybe_user: Option<User>, db: &State<MongoRepo>) -> Template {
     let user_name: Option<&str> = match maybe_user {
