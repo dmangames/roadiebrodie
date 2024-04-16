@@ -29,38 +29,23 @@ impl MongoRepo {
         MongoRepo { pins, trips }
     }
 
-    pub fn create_pin(&self, mut new_pin: Pin) -> Result<Pin, Error> {
+    pub fn create_pin(&self, new_pin: Pin) -> Result<Pin, Error> {
         let pin = self.pins.insert_one(&new_pin, None)?;
         let id = match pin.inserted_id {
             bson::Bson::ObjectId(id) => Ok(id.to_hex()),
             _ => Err(anyhow::anyhow!("unexpected db response")),
         }?;
-        new_pin.db_id = Some(id);
-        // Update the newly created pin to set the db_id field.
-        self.upsert_pin(new_pin)
     }
 
     pub fn upsert_pin(&self, pin: Pin) -> Result<Pin, Error> {
-        match &pin.db_id {
-            None => self.create_pin(pin),
-            Some(db_id) => {
-                let oid: ObjectId = db_id.parse()?;
-                self.pins.replace_one(doc! {"_id": oid}, &pin, None)?;
-                Ok(pin)
-            }
-        }
+        self.pins.replace_one(doc! {"_id": pin._id}, &pin, None)?;
+        Ok(pin)
     }
 
     pub fn get_pin(&self, id: &str) -> Result<Pin, Error> {
         let obj_id = ObjectId::parse_str(id)?;
         let filter = doc! {"_id": obj_id};
-        match self.pins.find_one(filter, None)? {
-            Some(mut pin) => {
-                pin.db_id = Some(id.to_string());
-                Ok(pin)
-            }
-            None => Err(anyhow::anyhow!("not found")),
-        }
+        self.pins.find_one(filter, None)?.ok_or_else(|| anyhow::anyhow!("not found"))
     }
 
     pub fn get_pins_by_userid(&self, userid: &str) -> Result<Vec<Pin>, Error> {

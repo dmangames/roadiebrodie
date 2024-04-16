@@ -139,7 +139,7 @@ function initMap() {
 				console.log(noteData);
 				var body = {data: noteData, position: pin_map.get(this.db_id).marker.position};
 				if (this.hasBeenSaved) {
-					body.db_id = this.db_id;
+					body._id = this.db_id;
 				}
 				fetch('/api/pin', {
 					method: 'POST',
